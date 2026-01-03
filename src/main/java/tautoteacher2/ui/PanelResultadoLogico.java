@@ -1,4 +1,10 @@
 package main.java.tautoteacher2.ui;
 
-public class PanelResultadoLogico {
+import javax.swing.JPanel;
+
+public class PanelResultadoLogico extends JPanel {
+
+    public PanelResultadoLogico() {
+
+    }
 }
