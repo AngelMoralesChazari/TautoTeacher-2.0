@@ -4,17 +4,21 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.Border;
 
+/**
+ * Resultado al estilo TautoTeacher original: icono centrado arriba, texto debajo; bloque más compacto que el área de fórmula.
+ */
 public class PanelResultadoLogico extends JPanel {
 
-    private static final int ALTURA_MINIMA_RESPUESTA = 200;
-    private static final int FILAS_AREA_TEXTO = 8;
+    /** Menos filas que la entrada: el panel Resultado debe ocupar menos altura vertical. */
+    private static final int FILAS_AREA_TEXTO = 4;
+    private static final int ALTURA_PREFERIDA_SCROLL = 110;
 
     private final JLabel etiquetaIcono;
     private final JTextArea areaResultado;
     private final JScrollPane scrollResultado;
 
     public PanelResultadoLogico() {
-        super(new BorderLayout(12, 0));
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createTitledBorder("Resultado"),
                 BorderFactory.createEmptyBorder(15, 15, 15, 15)
@@ -23,15 +27,12 @@ public class PanelResultadoLogico extends JPanel {
 
         etiquetaIcono = new JLabel();
         etiquetaIcono.setFont(new Font("Segoe UI Symbol", Font.BOLD, 32));
-        etiquetaIcono.setVerticalAlignment(SwingConstants.TOP);
-        etiquetaIcono.setHorizontalAlignment(SwingConstants.CENTER);
-        etiquetaIcono.setPreferredSize(new Dimension(44, 44));
-        etiquetaIcono.setMinimumSize(new Dimension(44, 44));
+        etiquetaIcono.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JPanel columnaIcono = new JPanel(new BorderLayout());
-        columnaIcono.setOpaque(false);
-        columnaIcono.add(etiquetaIcono, BorderLayout.NORTH);
-        add(columnaIcono, BorderLayout.WEST);
+        JPanel filaIcono = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        filaIcono.setOpaque(false);
+        filaIcono.setAlignmentX(Component.CENTER_ALIGNMENT);
+        filaIcono.add(etiquetaIcono);
 
         areaResultado = new JTextArea(FILAS_AREA_TEXTO, 40);
         areaResultado.setEditable(false);
@@ -49,9 +50,12 @@ public class PanelResultadoLogico extends JPanel {
         scrollResultado.setBorder(BorderFactory.createEmptyBorder());
         scrollResultado.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollResultado.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-        scrollResultado.setPreferredSize(new Dimension(400, ALTURA_MINIMA_RESPUESTA));
-        scrollResultado.setMinimumSize(new Dimension(200, ALTURA_MINIMA_RESPUESTA));
-        add(scrollResultado, BorderLayout.CENTER);
+        scrollResultado.setPreferredSize(new Dimension(400, ALTURA_PREFERIDA_SCROLL));
+        scrollResultado.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        add(filaIcono);
+        add(Box.createRigidArea(new Dimension(0, 8)));
+        add(scrollResultado);
     }
 
     public void setResultado(String texto) {

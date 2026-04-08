@@ -124,7 +124,9 @@ public class PanelEntradaNatural extends JPanel {
         }
 
         JScrollPane scroll = new JScrollPane(areaFormula);
-        scroll.setPreferredSize(new Dimension(700, 150));
+        // Más alto que el panel Resultado, alineado al original (entrada dominante en altura).
+        scroll.setPreferredSize(new Dimension(700, 240));
+        scroll.setMinimumSize(new Dimension(400, 180));
 
         capa.add(panelSimbolos);
         capa.add(Box.createRigidArea(new Dimension(0, 10)));
