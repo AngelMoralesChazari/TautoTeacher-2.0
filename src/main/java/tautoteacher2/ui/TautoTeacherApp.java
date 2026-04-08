@@ -1,8 +1,7 @@
 package tautoteacher2.ui;
 
-import tautoteacher2.core.logica.MotorLogico;
-
 import java.awt.Color;
+import tautoteacher2.core.logica.MotorLogico;
 
 public class TautoTeacherApp {
 
@@ -36,7 +35,7 @@ public class TautoTeacherApp {
             return;
         }
 
-        String formula = panelEntrada.getTextoFormula().trim();
+        String formula = normalizarSimbolosTeclado(panelEntrada.getTextoFormula().trim());
         if (formula.isEmpty()) {
             panelResultado.limpiarIcono();
             panelResultado.setResultado("Por favor ingrese una expresión lógica para verificar.", COLOR_ERROR);
@@ -67,5 +66,21 @@ public class TautoTeacherApp {
             panelResultado.limpiarIcono();
             panelResultado.setResultado("Error al analizar la expresión: " + ex.getMessage(), COLOR_ERROR);
         }
+    }
+
+    private static String normalizarSimbolosTeclado(String f) {
+        if (f == null || f.isEmpty()) {
+            return "";
+        }
+        String s = f.trim();
+        s = s.replace("<->", "↔");
+        s = s.replace("<=>", "↔");
+        s = s.replace("->", "→");
+        s = s.replace("&&", "∧");
+        s = s.replace("||", "∨");
+        s = s.replace("^", "∧");
+        s = s.replace("~", "¬");
+        s = s.replace("!", "¬");
+        return s.replaceAll("\\s+", " ").trim();
     }
 }

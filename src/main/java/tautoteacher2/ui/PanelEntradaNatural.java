@@ -22,6 +22,7 @@ public class PanelEntradaNatural extends JPanel {
 
     public PanelEntradaNatural() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        setAlignmentX(Component.LEFT_ALIGNMENT);
         setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createTitledBorder("Entrada"),
                 BorderFactory.createEmptyBorder(15, 15, 15, 15)
@@ -33,6 +34,7 @@ public class PanelEntradaNatural extends JPanel {
 
         JPanel panelSelector = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
         panelSelector.setOpaque(false);
+        panelSelector.setAlignmentX(Component.LEFT_ALIGNMENT);
         radioFormula = new JRadioButton("Fórmula Lógica", true);
         radioLn = new JRadioButton("Lenguaje Natural");
         radioFormula.setFont(new Font("Segoe UI", Font.PLAIN, 14));
@@ -48,6 +50,7 @@ public class PanelEntradaNatural extends JPanel {
         layoutTarjetasEntrada = new CardLayout();
         panelContenidoPorModo = new JPanel(layoutTarjetasEntrada);
         panelContenidoPorModo.setOpaque(false);
+        panelContenidoPorModo.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         areaFormula = new JTextArea();
         configurarAreaTexto(areaFormula);
@@ -102,12 +105,14 @@ public class PanelEntradaNatural extends JPanel {
     private JPanel construirCapaFormula() {
         JPanel capa = new JPanel();
         capa.setLayout(new BoxLayout(capa, BoxLayout.Y_AXIS));
+        capa.setAlignmentX(Component.LEFT_ALIGNMENT);
         capa.setOpaque(false);
         capa.setBorder(BorderFactory.createTitledBorder("Expresión en lógica proposicional"));
 
         JPanel panelSimbolos = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
         panelSimbolos.setBorder(BorderFactory.createTitledBorder("Símbolos lógicos"));
         panelSimbolos.setOpaque(false);
+        panelSimbolos.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         String[] simbolos = {"¬", "∧", "∨", "→", "↔", "(", ")"};
         for (String simbolo : simbolos) {
@@ -123,19 +128,22 @@ public class PanelEntradaNatural extends JPanel {
             panelSimbolos.add(botonSimbolo);
         }
 
+        areaFormula.setRows(5);
+        areaFormula.setColumns(40);
+
         JScrollPane scroll = new JScrollPane(areaFormula);
-        // Más alto que el panel Resultado, alineado al original (entrada dominante en altura).
-        scroll.setPreferredSize(new Dimension(700, 240));
-        scroll.setMinimumSize(new Dimension(400, 180));
+        scroll.setAlignmentX(Component.LEFT_ALIGNMENT);
+        scroll.setPreferredSize(new Dimension(700, 150));
 
         capa.add(panelSimbolos);
-        capa.add(Box.createRigidArea(new Dimension(0, 10)));
+        capa.add(Box.createRigidArea(new Dimension(0, 5)));
         capa.add(scroll);
         return capa;
     }
 
     private JPanel construirCapaLenguajeNatural() {
         JPanel capa = new JPanel(new BorderLayout(0, 8));
+        capa.setAlignmentX(Component.LEFT_ALIGNMENT);
         capa.setOpaque(false);
         capa.setBorder(BorderFactory.createTitledBorder("Enunciado"));
 
@@ -145,8 +153,9 @@ public class PanelEntradaNatural extends JPanel {
         ayuda.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         ayuda.setForeground(new Color(80, 80, 80));
 
+        areaLenguajeNatural.setRows(5);
         JScrollPane scroll = new JScrollPane(areaLenguajeNatural);
-        scroll.setPreferredSize(new Dimension(700, 180));
+        scroll.setPreferredSize(new Dimension(700, 150));
 
         capa.add(ayuda, BorderLayout.NORTH);
         capa.add(scroll, BorderLayout.CENTER);

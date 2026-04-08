@@ -159,6 +159,10 @@ public class VentanaPrincipal extends JFrame {
         JPanel panelCentral = new JPanel();
         panelCentral.setLayout(new BoxLayout(panelCentral, BoxLayout.Y_AXIS));
         panelCentral.setOpaque(false);
+        panelCentral.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panelEntrada.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panelResultado.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panelInstrucciones.setAlignmentX(Component.LEFT_ALIGNMENT);
         panelCentral.add(panelEntrada);
         panelCentral.add(Box.createRigidArea(new Dimension(0, 15)));
         panelCentral.add(panelResultado);
