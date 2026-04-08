@@ -1,51 +1,76 @@
 package tautoteacher2.ui;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
 
 public class PanelEntradaNatural extends JPanel {
 
-    private final JTextArea areaTexto;
+    public enum ModoEntrada {
+        FORMULA,
+        LENGUAJE_NATURAL
+    }
+
+    private final JTextArea areaFormula;
+    private final JTextArea areaLenguajeNatural;
+    private final JRadioButton radioFormula;
+    private final JRadioButton radioLn;
+    private final CardLayout layoutTarjetasEntrada;
+    private final JPanel panelContenidoPorModo;
     private final JButton botonProcesar;
 
     public PanelEntradaNatural() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createTitledBorder("Ingrese Su Expresión Lógica"),
+                BorderFactory.createTitledBorder("Entrada"),
                 BorderFactory.createEmptyBorder(15, 15, 15, 15)
         ));
         setOpaque(false);
 
-        areaTexto = new JTextArea();
-        areaTexto.setLineWrap(true);
-        areaTexto.setWrapStyleWord(true);
-        areaTexto.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 14));
-        areaTexto.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(Color.LIGHT_GRAY),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)
-        ));
+        TitledBorder tbExterno = (TitledBorder) ((javax.swing.border.CompoundBorder) getBorder()).getOutsideBorder();
+        tbExterno.setTitleFont(new Font("Segoe UI", Font.PLAIN, 14));
 
-        JPanel panelSimbolos = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
-        panelSimbolos.setBorder(BorderFactory.createTitledBorder("Símbolos Lógicos"));
-        panelSimbolos.setOpaque(false);
+        JPanel panelSelector = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
+        panelSelector.setOpaque(false);
+        radioFormula = new JRadioButton("Fórmula Lógica", true);
+        radioLn = new JRadioButton("Lenguaje Natural");
+        radioFormula.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        radioLn.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        radioFormula.setOpaque(false);
+        radioLn.setOpaque(false);
+        ButtonGroup grupoModo = new ButtonGroup();
+        grupoModo.add(radioFormula);
+        grupoModo.add(radioLn);
+        panelSelector.add(radioFormula);
+        panelSelector.add(radioLn);
 
-        String[] simbolos = {"¬", "∧", "∨", "→", "↔", "(", ")"};
-        for (String simbolo : simbolos) {
-            JButton botonSimbolo = new JButton(simbolo);
-            botonSimbolo.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 14));
-            botonSimbolo.setFocusable(false);
-            botonSimbolo.addActionListener(e -> {
-                int pos = areaTexto.getCaretPosition();
-                areaTexto.insert(simbolo, pos);
-                areaTexto.requestFocus();
-                areaTexto.setCaretPosition(pos + simbolo.length());
-            });
-            panelSimbolos.add(botonSimbolo);
-        }
+        layoutTarjetasEntrada = new CardLayout();
+        panelContenidoPorModo = new JPanel(layoutTarjetasEntrada);
+        panelContenidoPorModo.setOpaque(false);
 
-        JScrollPane scroll = new JScrollPane(areaTexto);
-        scroll.setPreferredSize(new Dimension(700, 150));
+        areaFormula = new JTextArea();
+        configurarAreaTexto(areaFormula);
+        JPanel capaFormula = construirCapaFormula();
+
+        areaLenguajeNatural = new JTextArea();
+        configurarAreaTexto(areaLenguajeNatural);
+        areaLenguajeNatural.setToolTipText("Escriba aquí su enunciado");
+        JPanel capaLn = construirCapaLenguajeNatural();
+
+        panelContenidoPorModo.add(capaFormula, "formula");
+        panelContenidoPorModo.add(capaLn, "ln");
+
+        radioFormula.addActionListener(e -> {
+            if (radioFormula.isSelected()) {
+                layoutTarjetasEntrada.show(panelContenidoPorModo, "formula");
+            }
+        });
+        radioLn.addActionListener(e -> {
+            if (radioLn.isSelected()) {
+                layoutTarjetasEntrada.show(panelContenidoPorModo, "ln");
+            }
+        });
 
         botonProcesar = new JButton("✔ Verificar Tautología");
         botonProcesar.setBackground(new Color(74, 111, 165));
@@ -57,15 +82,94 @@ public class PanelEntradaNatural extends JPanel {
         ));
         botonProcesar.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        add(panelSimbolos);
+        add(panelSelector);
         add(Box.createRigidArea(new Dimension(0, 10)));
-        add(scroll);
+        add(panelContenidoPorModo);
         add(Box.createRigidArea(new Dimension(0, 15)));
         add(botonProcesar);
     }
 
+    private void configurarAreaTexto(JTextArea area) {
+        area.setLineWrap(true);
+        area.setWrapStyleWord(true);
+        area.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 14));
+        area.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Color.LIGHT_GRAY),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)
+        ));
+    }
+
+    private JPanel construirCapaFormula() {
+        JPanel capa = new JPanel();
+        capa.setLayout(new BoxLayout(capa, BoxLayout.Y_AXIS));
+        capa.setOpaque(false);
+        capa.setBorder(BorderFactory.createTitledBorder("Expresión en lógica proposicional"));
+
+        JPanel panelSimbolos = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        panelSimbolos.setBorder(BorderFactory.createTitledBorder("Símbolos lógicos"));
+        panelSimbolos.setOpaque(false);
+
+        String[] simbolos = {"¬", "∧", "∨", "→", "↔", "(", ")"};
+        for (String simbolo : simbolos) {
+            JButton botonSimbolo = new JButton(simbolo);
+            botonSimbolo.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 14));
+            botonSimbolo.setFocusable(false);
+            botonSimbolo.addActionListener(e -> {
+                int pos = areaFormula.getCaretPosition();
+                areaFormula.insert(simbolo, pos);
+                areaFormula.requestFocus();
+                areaFormula.setCaretPosition(pos + simbolo.length());
+            });
+            panelSimbolos.add(botonSimbolo);
+        }
+
+        JScrollPane scroll = new JScrollPane(areaFormula);
+        scroll.setPreferredSize(new Dimension(700, 150));
+
+        capa.add(panelSimbolos);
+        capa.add(Box.createRigidArea(new Dimension(0, 10)));
+        capa.add(scroll);
+        return capa;
+    }
+
+    private JPanel construirCapaLenguajeNatural() {
+        JPanel capa = new JPanel(new BorderLayout(0, 8));
+        capa.setOpaque(false);
+        capa.setBorder(BorderFactory.createTitledBorder("Enunciado"));
+
+        JLabel ayuda = new JLabel(
+                "<html><body style='width: 640px;'>Escriba su enunciado.</body></html>"
+        );
+        ayuda.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        ayuda.setForeground(new Color(80, 80, 80));
+
+        JScrollPane scroll = new JScrollPane(areaLenguajeNatural);
+        scroll.setPreferredSize(new Dimension(700, 180));
+
+        capa.add(ayuda, BorderLayout.NORTH);
+        capa.add(scroll, BorderLayout.CENTER);
+        return capa;
+    }
+
+    public ModoEntrada getModoEntrada() {
+        return radioLn.isSelected() ? ModoEntrada.LENGUAJE_NATURAL : ModoEntrada.FORMULA;
+    }
+
+    /**
+     * Texto activo según el modo: fórmula o enunciado LN.
+     */
     public String getTexto() {
-        return areaTexto.getText();
+        return getModoEntrada() == ModoEntrada.FORMULA
+                ? areaFormula.getText()
+                : areaLenguajeNatural.getText();
+    }
+
+    public String getTextoFormula() {
+        return areaFormula.getText();
+    }
+
+    public String getTextoLenguajeNatural() {
+        return areaLenguajeNatural.getText();
     }
 
     public void setProcesarListener(ActionListener listener) {

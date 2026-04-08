@@ -1,8 +1,5 @@
 package tautoteacher2.ui;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 public class TautoTeacherApp {
 
     private VentanaPrincipal ventana;
@@ -17,14 +14,13 @@ public class TautoTeacherApp {
         panelResultado = ventana.getPanelResultadoLogico();
 
         // Agregar listener al botón procesar
-        panelEntrada.setProcesarListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String texto = panelEntrada.getTexto();
-                // Simulación de procesamiento
-                String resultadoSimulado = "Procesado: " + texto.toUpperCase();
-                panelResultado.setResultado(resultadoSimulado);
-            }
+        panelEntrada.setProcesarListener(e -> {
+            String texto = panelEntrada.getTexto();
+            String modo = panelEntrada.getModoEntrada() == PanelEntradaNatural.ModoEntrada.FORMULA
+                    ? "Fórmula lógica"
+                    : "Lenguaje Natural";
+            String resultadoSimulado = "[" + modo + "] Procesado: " + texto.toUpperCase();
+            panelResultado.setResultado(resultadoSimulado);
         });
 
         ventana.setVisible(true);

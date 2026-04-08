@@ -145,9 +145,9 @@ public class VentanaPrincipal extends JFrame {
         panelInstrucciones.setOpaque(false);
 
         String[] instrucciones = {
-                "Utilice los símbolos estándar: ∧ (AND), ∨ (OR), ¬ (NOT), → (implicación), ↔ (equivalencia)",
-                "Puede usar paréntesis para agrupar expresiones",
-                "Ejemplos válidos: \"p → q\", \"¬(p ∧ ¬q)\", \"(p ∨ q) ↔ (q ∨ p)\""
+                "Modo Fórmula: use ∧, ∨, ¬, →, ↔ y paréntesis; los botones insertan símbolos en el área de texto.",
+                "Modo LN: escriba enunciados en español; el paso de traducción a fórmula se integrará con el motor en el siguiente desarrollo.",
+                "Ejemplos de fórmula: \"p → q\", \"¬(p ∧ ¬q)\", \"(p ∨ q) ↔ (q ∨ p)\""
         };
         for (String instruccion : instrucciones) {
             JLabel etiqueta = new JLabel("• " + instruccion);
