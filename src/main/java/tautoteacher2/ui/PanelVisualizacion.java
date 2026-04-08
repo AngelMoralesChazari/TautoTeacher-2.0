@@ -1,19 +1,26 @@
-package main.java.tautoteacher2.ui;
+package tautoteacher2.ui;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class PanelVisualizacion extends JPanel {
 
-    private JLabel etiqueta;
+    private final JTextArea areaVisualizacion;
 
     public PanelVisualizacion() {
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createTitledBorder("Visualización"));
+        setOpaque(false);
 
-        etiqueta = new JLabel("Aquí se mostrará la visualización");
-        etiqueta.setHorizontalAlignment(SwingConstants.CENTER);
+        areaVisualizacion = new JTextArea();
+        areaVisualizacion.setEditable(false);
+        areaVisualizacion.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 16));
+        areaVisualizacion.setText("Aquí se mostrará la visualización");
 
-        add(etiqueta, BorderLayout.CENTER);
+        add(new JScrollPane(areaVisualizacion), BorderLayout.CENTER);
+    }
+
+    public void setVisualizacion(String texto) {
+        areaVisualizacion.setText(texto);
     }
 }

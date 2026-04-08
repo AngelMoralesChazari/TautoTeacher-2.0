@@ -1,4 +1,4 @@
-package main.java.tautoteacher2.nlp.lexer;
+package tautoteacher2.nlp.lexer;
 
 public class LexerNatural {
 }

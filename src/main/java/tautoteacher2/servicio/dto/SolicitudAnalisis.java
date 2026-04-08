@@ -1,4 +1,4 @@
-package main.java.tautoteacher2.servicio.dto;
+package tautoteacher2.servicio.dto;
 
 public class SolicitudAnalisis {
 }

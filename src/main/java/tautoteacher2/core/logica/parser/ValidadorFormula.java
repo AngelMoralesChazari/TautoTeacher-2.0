@@ -1,4 +1,4 @@
-package core.logica.parser;
+package tautoteacher2.core.logica.parser;
 
 public class ValidadorFormula {
 }

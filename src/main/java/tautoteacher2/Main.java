@@ -1,6 +1,6 @@
-package main.java.tautoteacher2;
+package tautoteacher2;
 
-import main.java.tautoteacher2.ui.TautoTeacherApp;
+import tautoteacher2.ui.TautoTeacherApp;
 
 public class Main {
     public static void main(String[] args) {

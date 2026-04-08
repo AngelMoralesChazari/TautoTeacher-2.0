@@ -1,4 +1,4 @@
-package main.java.tautoteacher2.core.logica;
+package tautoteacher2.core.logica;
 
 import java.util.*;
 import java.util.regex.Matcher;

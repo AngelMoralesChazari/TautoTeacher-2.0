@@ -1,4 +1,4 @@
-package main.java.tautoteacher2.ui;
+package tautoteacher2.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

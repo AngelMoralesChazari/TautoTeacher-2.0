@@ -1,4 +1,4 @@
-package main.java.tautoteacher2.servicio;
+package tautoteacher2.servicio;
 
 public class ServicioTautoTeacher {
 }
