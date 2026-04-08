@@ -143,7 +143,6 @@ public class VentanaPrincipal extends JFrame {
     }
 
     private JPanel construirPanelAnalisis() {
-        // Panel de instrucciones con el mismo texto que el original
         JPanel panelInstrucciones = new JPanel();
         panelInstrucciones.setLayout(new BoxLayout(panelInstrucciones, BoxLayout.Y_AXIS));
         panelInstrucciones.setBorder(BorderFactory.createCompoundBorder(
