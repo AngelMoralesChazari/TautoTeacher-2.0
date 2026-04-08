@@ -90,8 +90,7 @@ public class PanelEntradaNatural extends JPanel {
     public String getTextoFormula() {
         return areaFormula.getText();
     }
-
-    // Mantenido por compatibilidad; retorna cadena vacía ya que no hay modo LN
+    
     public String getTextoLenguajeNatural() {
         return "";
     }
