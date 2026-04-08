@@ -23,6 +23,9 @@ bin/
 /nbdist/
 /.nb-gradle/
 
+### Documentación local (no versionar) ###
+Documentacion/
+
 ### VS Code ###
 .vscode/
 
