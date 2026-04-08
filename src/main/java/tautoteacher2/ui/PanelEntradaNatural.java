@@ -79,7 +79,6 @@ public class PanelEntradaNatural extends JPanel {
         add(botonProcesar);
     }
 
-    // Siempre retorna FORMULA (modo único visible, igual que el original)
     public ModoEntrada getModoEntrada() {
         return ModoEntrada.FORMULA;
     }
