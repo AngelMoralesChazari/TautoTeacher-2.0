@@ -80,7 +80,7 @@ public class VentanaPrincipal extends JFrame {
         encabezado.add(Box.createRigidArea(new Dimension(0, 10)));
         encabezado.add(subtitulo);
 
-        // Tarjetas de navegación en la parte superior
+        // Tarjetas de navegación en la parte superior de la ventana
         JPanel tarjetas = new JPanel(new GridLayout(1, 3, 15, 0));
         tarjetas.setBorder(BorderFactory.createEmptyBorder(10, 10, 20, 10));
         tarjetas.setPreferredSize(new Dimension(0, 120));
