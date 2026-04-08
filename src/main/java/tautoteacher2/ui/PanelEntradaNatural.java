@@ -27,7 +27,7 @@ public class PanelEntradaNatural extends JPanel {
         TitledBorder tbExterno = (TitledBorder) ((javax.swing.border.CompoundBorder) getBorder()).getOutsideBorder();
         tbExterno.setTitleFont(new Font("Segoe UI", Font.PLAIN, 14));
 
-        // --- Panel de símbolos ---
+        // Panel de símbolos 
         JPanel panelSimbolos = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
         panelSimbolos.setBorder(BorderFactory.createTitledBorder("Símbolos Lógicos"));
         panelSimbolos.setOpaque(false);
@@ -56,12 +56,12 @@ public class PanelEntradaNatural extends JPanel {
             panelSimbolos.add(botonSimbolo);
         }
 
-        // --- Scroll del área de texto ---
+        // Scroll del área de texto 
         JScrollPane scroll = new JScrollPane(areaFormula);
         scroll.setAlignmentX(Component.LEFT_ALIGNMENT);
         scroll.setPreferredSize(new Dimension(700, 150));
 
-        // --- Botón verificar ---
+        // Botón verificar
         botonProcesar = new JButton("✔ Verificar Tautología");
         botonProcesar.setBackground(new Color(74, 111, 165));
         botonProcesar.setForeground(Color.BLACK);
