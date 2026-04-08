@@ -25,7 +25,6 @@ public class PanelResultadoLogico extends JPanel {
         areaResultado.setEditable(false);
         areaResultado.setLineWrap(true);
         areaResultado.setWrapStyleWord(true);
-        // Segoe UI Symbol dibuja ∧∨→↔¬; Segoe UI plano suele mostrar □ en esos caracteres.
         areaResultado.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 16));
         areaResultado.setBackground(Color.WHITE);
         areaResultado.setAlignmentX(Component.LEFT_ALIGNMENT);
