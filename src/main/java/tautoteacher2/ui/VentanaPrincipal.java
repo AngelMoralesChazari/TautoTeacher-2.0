@@ -62,7 +62,6 @@ public class VentanaPrincipal extends JFrame {
         encabezado.setLayout(new BoxLayout(encabezado, BoxLayout.Y_AXIS));
         encabezado.setOpaque(false);
 
-        // Título con ícono (sin imagen, solo texto como en imagen 2)
         JPanel filaTitulo = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
         filaTitulo.setOpaque(false);
 
