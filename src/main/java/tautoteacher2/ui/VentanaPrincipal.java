@@ -87,7 +87,7 @@ public class VentanaPrincipal extends JFrame {
         tarjetas.setOpaque(false);
         tarjetas.add(crearTarjeta("Análisis Rápido", "Verifica expresiones lógicas en tiempo real", "analisis"));
         tarjetas.add(crearTarjeta("Visualización Clara", "Resultados presentados de forma intuitiva", "visualizacion"));
-        tarjetas.add(crearTarjeta("Educativo", "Perfecto para estudiantes de lógica", "educativo"));
+        tarjetas.add(crearTarjeta("Explicación", "Paso a paso (como en TautoTeacher original)", "educativo"));
 
         JPanel norte = new JPanel();
         norte.setLayout(new BoxLayout(norte, BoxLayout.Y_AXIS));
@@ -147,14 +147,14 @@ public class VentanaPrincipal extends JFrame {
         panelInstrucciones.setLayout(new BoxLayout(panelInstrucciones, BoxLayout.Y_AXIS));
         panelInstrucciones.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createTitledBorder("Instrucciones"),
-                BorderFactory.createEmptyBorder(10, 8, 10, 10)
+                BorderFactory.createEmptyBorder(15, 15, 15, 15)
         ));
         panelInstrucciones.setOpaque(false);
 
         String[] instrucciones = {
-            "Utilice los símbolos estándar: ∧ (AND), ∨ (OR), ¬ (NOT), → (implicación), ↔ (equivalencia)",
-            "Puede usar paréntesis para agrupar expresiones",
-            "Ejemplos válidos: \"p → q\", \"¬(p ∧ ¬q)\", \"(p ∨ q) ↔ (q ∨ p)\""
+            "Pestaña «Fórmula lógica»: símbolos ∧ ∨ ¬ → ↔ y paréntesis; ejemplos: \"p → q\", \"¬(p ∧ ¬q)\".",
+            "Pestaña «Lenguaje natural»: escriba el enunciado en español (la traducción a fórmula se conectará al motor más adelante).",
+            "Sección «Explicación» (tarjeta superior): explicación paso a paso cuando esté conectada al motor."
         };
         for (String instruccion : instrucciones) {
             JLabel etiqueta = new JLabel("• " + instruccion);
@@ -166,10 +166,10 @@ public class VentanaPrincipal extends JFrame {
         JPanel panelCentral = new JPanel();
         panelCentral.setLayout(new BoxLayout(panelCentral, BoxLayout.Y_AXIS));
         panelCentral.setOpaque(false);
-        panelCentral.setAlignmentX(Component.LEFT_ALIGNMENT);
-        panelEntrada.setAlignmentX(Component.LEFT_ALIGNMENT);
-        panelResultado.setAlignmentX(Component.LEFT_ALIGNMENT);
-        panelInstrucciones.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panelCentral.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        panelEntrada.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        panelResultado.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        panelInstrucciones.setAlignmentX(Component.RIGHT_ALIGNMENT);
         panelCentral.add(panelEntrada);
         panelCentral.add(Box.createRigidArea(new Dimension(0, 15)));
         panelCentral.add(panelResultado);
