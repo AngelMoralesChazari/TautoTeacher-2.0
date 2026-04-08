@@ -6,7 +6,10 @@ import java.util.regex.Pattern;
 
 public class MotorLogico {
 
-    private static boolean esTautologia(String formula) {
+    /**
+     * Indica si la fórmula es tautología bajo todas las interpretaciones de sus variables.
+     */
+    public static boolean esTautologia(String formula) {
         validarSintaxis(formula);
 
         // Reemplazar símbolos

@@ -35,7 +35,16 @@ public class PanelResultadoLogico extends JPanel {
     }
 
     public void setResultado(String texto) {
+        setResultado(texto, Color.BLACK);
+    }
+
+    public void setResultado(String texto, Color color) {
         areaResultado.setText(texto);
+        areaResultado.setForeground(color != null ? color : Color.BLACK);
+    }
+
+    public void limpiarIcono() {
+        etiquetaIcono.setText("");
     }
 
     public void setEstado(boolean exito) {
