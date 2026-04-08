@@ -6,9 +6,6 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 
 public class PanelEntradaNatural extends JPanel {
-
-    // Mantener el enum para compatibilidad con TautoTeacherApp,
-    // pero la UI ya no muestra los radio buttons (igual que el original).
     public enum ModoEntrada {
         FORMULA,
         LENGUAJE_NATURAL
