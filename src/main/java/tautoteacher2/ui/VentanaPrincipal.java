@@ -1,9 +1,9 @@
 package tautoteacher2.ui;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.*;
 
 public class VentanaPrincipal extends JFrame {
 
@@ -16,9 +16,9 @@ public class VentanaPrincipal extends JFrame {
     public VentanaPrincipal() {
         super("TautoTeacher - Logica Proposicional");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setMinimumSize(new Dimension(900, 650));
-        setSize(1200, 800);
-        setLocationRelativeTo(null);
+        setMinimumSize(new Dimension(650, 600));
+        // *** MAXIMIZAR como el original ***
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
 
         panelEntrada = new PanelEntradaNatural();
         panelResultado = new PanelResultadoLogico();
@@ -30,7 +30,7 @@ public class VentanaPrincipal extends JFrame {
         Color colorPrimario = new Color(74, 111, 165);
 
         JPanel panelPrincipal = new JPanel(new BorderLayout());
-        panelPrincipal.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        panelPrincipal.setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
         panelPrincipal.setBackground(new Color(248, 249, 250));
 
         JPanel panelNorte = construirEncabezadoYTarjetas(colorPrimario);
@@ -63,18 +63,29 @@ public class VentanaPrincipal extends JFrame {
         encabezado.setLayout(new BoxLayout(encabezado, BoxLayout.Y_AXIS));
         encabezado.setOpaque(false);
 
+        // Título con ícono (sin imagen, solo texto como en imagen 2)
+        JPanel filaTitulo = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
+        filaTitulo.setOpaque(false);
+
         JLabel titulo = new JLabel("TautoTeacher");
-        titulo.setFont(new Font("Segoe UI", Font.BOLD, 40));
+        titulo.setFont(new Font("Segoe UI", Font.BOLD, 28));
         titulo.setForeground(colorPrimario);
-        titulo.setAlignmentX(Component.CENTER_ALIGNMENT);
+        filaTitulo.add(titulo);
 
         JLabel subtitulo = new JLabel("Herramienta para la verificación de tautologías lógicas");
         subtitulo.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         subtitulo.setForeground(Color.GRAY);
         subtitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
+        subtitulo.setOpaque(false);
 
+        encabezado.add(filaTitulo);
+        encabezado.add(Box.createRigidArea(new Dimension(0, 10)));
+        encabezado.add(subtitulo);
+
+        // Tarjetas de navegación
         JPanel tarjetas = new JPanel(new GridLayout(1, 3, 15, 0));
         tarjetas.setBorder(BorderFactory.createEmptyBorder(10, 10, 20, 10));
+        tarjetas.setPreferredSize(new Dimension(0, 120));
         tarjetas.setOpaque(false);
         tarjetas.add(crearTarjeta("Análisis Rápido", "Verifica expresiones lógicas en tiempo real", "analisis"));
         tarjetas.add(crearTarjeta("Visualización Clara", "Resultados presentados de forma intuitiva", "visualizacion"));
@@ -83,10 +94,8 @@ public class VentanaPrincipal extends JFrame {
         JPanel norte = new JPanel();
         norte.setLayout(new BoxLayout(norte, BoxLayout.Y_AXIS));
         norte.setOpaque(false);
-        norte.add(titulo);
-        norte.add(Box.createRigidArea(new Dimension(0, 8)));
-        norte.add(subtitulo);
-        norte.add(Box.createRigidArea(new Dimension(0, 12)));
+        norte.add(encabezado);
+        norte.add(Box.createRigidArea(new Dimension(0, 10)));
         norte.add(tarjetas);
         return norte;
     }
@@ -136,6 +145,7 @@ public class VentanaPrincipal extends JFrame {
     }
 
     private JPanel construirPanelAnalisis() {
+        // Panel de instrucciones con el mismo texto que el original
         JPanel panelInstrucciones = new JPanel();
         panelInstrucciones.setLayout(new BoxLayout(panelInstrucciones, BoxLayout.Y_AXIS));
         panelInstrucciones.setBorder(BorderFactory.createCompoundBorder(
@@ -145,9 +155,9 @@ public class VentanaPrincipal extends JFrame {
         panelInstrucciones.setOpaque(false);
 
         String[] instrucciones = {
-                "Modo Fórmula: use ∧, ∨, ¬, →, ↔ y paréntesis; los botones insertan símbolos en el área de texto.",
-                "Modo LN: escriba enunciados en español; el paso de traducción a fórmula se integrará con el motor en el siguiente desarrollo.",
-                "Ejemplos de fórmula: \"p → q\", \"¬(p ∧ ¬q)\", \"(p ∨ q) ↔ (q ∨ p)\""
+            "Utilice los símbolos estándar: ∧ (AND), ∨ (OR), ¬ (NOT), → (implicación), ↔ (equivalencia)",
+            "Puede usar paréntesis para agrupar expresiones",
+            "Ejemplos válidos: \"p → q\", \"¬(p ∧ ¬q)\", \"(p ∨ q) ↔ (q ∨ p)\""
         };
         for (String instruccion : instrucciones) {
             JLabel etiqueta = new JLabel("• " + instruccion);
