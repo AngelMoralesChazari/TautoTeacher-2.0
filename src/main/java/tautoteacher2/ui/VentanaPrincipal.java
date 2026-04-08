@@ -29,7 +29,7 @@ public class VentanaPrincipal extends JFrame {
         Color colorPrimario = new Color(74, 111, 165);
 
         JPanel panelPrincipal = new JPanel(new BorderLayout());
-        panelPrincipal.setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
+        panelPrincipal.setBorder(BorderFactory.createEmptyBorder(16, 8, 0, 16));
         panelPrincipal.setBackground(new Color(248, 249, 250));
 
         JPanel panelNorte = construirEncabezadoYTarjetas(colorPrimario);
@@ -147,7 +147,7 @@ public class VentanaPrincipal extends JFrame {
         panelInstrucciones.setLayout(new BoxLayout(panelInstrucciones, BoxLayout.Y_AXIS));
         panelInstrucciones.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createTitledBorder("Instrucciones"),
-                BorderFactory.createEmptyBorder(15, 15, 15, 15)
+                BorderFactory.createEmptyBorder(10, 8, 10, 10)
         ));
         panelInstrucciones.setOpaque(false);
 

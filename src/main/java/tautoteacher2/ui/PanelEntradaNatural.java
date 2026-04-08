@@ -19,7 +19,7 @@ public class PanelEntradaNatural extends JPanel {
         setAlignmentX(Component.LEFT_ALIGNMENT);
         setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createTitledBorder("Ingrese Su Expresión Lógica"),
-                BorderFactory.createEmptyBorder(15, 15, 15, 15)
+                BorderFactory.createEmptyBorder(10, 8, 10, 10)
         ));
         setOpaque(false);
 
@@ -61,22 +61,24 @@ public class PanelEntradaNatural extends JPanel {
         scroll.setAlignmentX(Component.LEFT_ALIGNMENT);
         scroll.setPreferredSize(new Dimension(700, 150));
 
-        // Botón verificar
         botonProcesar = new JButton("✔ Verificar Tautología");
         botonProcesar.setBackground(new Color(74, 111, 165));
         botonProcesar.setForeground(Color.BLACK);
         botonProcesar.setFont(new Font("Dialog", Font.BOLD, 14));
         botonProcesar.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(180, 180, 180), 1, true),
-                BorderFactory.createEmptyBorder(10, 15, 10, 15)
-        ));
-        botonProcesar.setAlignmentX(Component.CENTER_ALIGNMENT);
+                BorderFactory.createEmptyBorder(10, 15, 10, 15)));
+
+        JPanel filaBoton = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        filaBoton.setOpaque(false);
+        filaBoton.setAlignmentX(Component.LEFT_ALIGNMENT);
+        filaBoton.add(botonProcesar);
 
         add(panelSimbolos);
         add(Box.createRigidArea(new Dimension(0, 10)));
         add(scroll);
         add(Box.createRigidArea(new Dimension(0, 15)));
-        add(botonProcesar);
+        add(filaBoton);
     }
 
     public ModoEntrada getModoEntrada() {

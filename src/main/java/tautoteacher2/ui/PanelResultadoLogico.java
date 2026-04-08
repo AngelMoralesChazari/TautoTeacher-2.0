@@ -13,7 +13,7 @@ public class PanelResultadoLogico extends JPanel {
         setAlignmentX(Component.LEFT_ALIGNMENT);
         setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createTitledBorder("Resultado"),
-                BorderFactory.createEmptyBorder(8, 12, 8, 12)
+                BorderFactory.createEmptyBorder(8, 8, 8, 8)
         ));
         setOpaque(false);
 
