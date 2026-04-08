@@ -17,7 +17,6 @@ public class VentanaPrincipal extends JFrame {
         super("TautoTeacher - Logica Proposicional");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setMinimumSize(new Dimension(650, 600));
-        // *** MAXIMIZAR como el original ***
         setExtendedState(JFrame.MAXIMIZED_BOTH);
 
         panelEntrada = new PanelEntradaNatural();
