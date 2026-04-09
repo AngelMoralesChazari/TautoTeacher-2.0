@@ -2,6 +2,8 @@ package tautoteacher2.ui;
 
 import java.awt.Color;
 import tautoteacher2.core.logica.MotorLogico;
+import tautoteacher2.logicscript.LogicScriptResult;
+import tautoteacher2.logicscript.LogicScriptService;
 
 public class TautoTeacherApp {
 
@@ -11,6 +13,7 @@ public class TautoTeacherApp {
     private VentanaPrincipal ventana;
     private PanelEntradaNatural panelEntrada;
     private PanelResultadoLogico panelResultado;
+    private final LogicScriptService logicScriptService = new LogicScriptService();
 
     public void iniciar() {
         ventana = new VentanaPrincipal();
@@ -26,12 +29,7 @@ public class TautoTeacherApp {
 
     private void procesarEntrada() {
         if (panelEntrada.getModoEntrada() == PanelEntradaNatural.ModoEntrada.LENGUAJE_NATURAL) {
-            panelResultado.limpiarIcono();
-            panelResultado.setResultado(
-                    "Modo LN (lenguaje natural): el análisis con el motor lógico se activará cuando el "
-                            + "pipeline NLP traduzca el texto a fórmula.",
-                    Color.DARK_GRAY
-            );
+            procesarLenguajeNatural();
             return;
         }
 
@@ -65,6 +63,55 @@ public class TautoTeacherApp {
         } catch (Exception ex) {
             panelResultado.limpiarIcono();
             panelResultado.setResultado("Error al analizar la expresión: " + ex.getMessage(), COLOR_ERROR);
+        }
+    }
+
+    private void procesarLenguajeNatural() {
+        String enunciado = panelEntrada.getTextoLenguajeNatural().trim();
+        if (enunciado.isEmpty()) {
+            panelResultado.limpiarIcono();
+            panelResultado.setResultado("Por favor ingrese un enunciado en lenguaje natural.", COLOR_ERROR);
+            return;
+        }
+
+        try {
+            LogicScriptResult traduccion = logicScriptService.traducir(enunciado);
+            if (!traduccion.isExito()) {
+                panelResultado.limpiarIcono();
+                panelResultado.setResultado(
+                        "No pude interpretar el enunciado con las reglas actuales de LogicScript.\n"
+                                + traduccion.getMensaje(),
+                        COLOR_ERROR
+                );
+                return;
+            }
+
+            String formula = traduccion.getFormula();
+            boolean esTautologia = MotorLogico.esTautologia(formula);
+            String tipo = MotorLogico.tipoFormula(formula);
+
+            if (esTautologia) {
+                panelResultado.setEstado(true);
+                panelResultado.setResultado(
+                        "Tu enunciado es una tautología.\n"
+                                + "Clasificación: " + tipo + ".\n"
+                                + "La expresión es verdadera en todas las interpretaciones.\n"
+                                + "Forma lógica interna: " + formula,
+                        COLOR_AFIRMACION
+                );
+            } else {
+                panelResultado.setEstado(false);
+                panelResultado.setResultado(
+                        "Tu enunciado NO es una tautología.\n"
+                                + "Clasificación: " + tipo + ".\n"
+                                + "Existen interpretaciones donde la expresión es falsa.\n"
+                                + "Forma lógica interna: " + formula,
+                        COLOR_ERROR
+                );
+            }
+        } catch (Exception ex) {
+            panelResultado.limpiarIcono();
+            panelResultado.setResultado("Error al analizar el enunciado: " + ex.getMessage(), COLOR_ERROR);
         }
     }
 

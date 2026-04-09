@@ -25,6 +25,7 @@ bin/
 
 ### Documentación local (no versionar) ###
 Documentacion/
+docs/
 
 ### VS Code ###
 .vscode/

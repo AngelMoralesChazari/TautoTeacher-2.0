@@ -6,9 +6,6 @@ import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.TitledBorder;
 
-/**
- * Entrada para análisis: pestaña fórmula lógica o lenguaje natural, con un solo botón de verificación.
- */
 public class PanelEntradaNatural extends JPanel {
     public enum ModoEntrada {
         FORMULA,
