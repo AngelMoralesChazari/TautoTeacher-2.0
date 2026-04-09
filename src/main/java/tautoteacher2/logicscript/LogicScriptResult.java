@@ -15,37 +15,37 @@ public class LogicScriptResult {
             boolean exito,
             String formula,
             String mensaje,
-            List<String> trazas,
+            List<String> pasosDeAnalisis,
             Map<String, String> proposiciones
     ) {
         this.exito = exito;
         this.formula = formula;
         this.mensaje = mensaje;
-        this.pasosDeAnalisis = trazas;
+        this.pasosDeAnalisis = pasosDeAnalisis;
         this.proposiciones = proposiciones;
     }
 
     public static LogicScriptResult exito(
             String formula,
             String mensaje,
-            List<String> trazas,
+            List<String> pasosDeAnalisis,
             Map<String, String> proposiciones
     ) {
         return new LogicScriptResult(
                 true,
                 formula,
                 mensaje,
-                Collections.unmodifiableList(trazas),
+                Collections.unmodifiableList(pasosDeAnalisis),
                 Collections.unmodifiableMap(proposiciones)
         );
     }
 
-    public static LogicScriptResult error(String mensaje, List<String> trazas) {
+    public static LogicScriptResult error(String mensaje, List<String> pasosDeAnalisis) {
         return new LogicScriptResult(
                 false,
                 "",
                 mensaje,
-                Collections.unmodifiableList(trazas),
+                Collections.unmodifiableList(pasosDeAnalisis),
                 Collections.emptyMap()
         );
     }
@@ -62,7 +62,7 @@ public class LogicScriptResult {
         return mensaje;
     }
 
-    public List<String> getTrazas() {
+    public List<String> getPasosDeAnalisis() {
         return pasosDeAnalisis;
     }
 

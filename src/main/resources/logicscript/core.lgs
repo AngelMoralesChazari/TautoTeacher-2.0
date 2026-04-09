@@ -1,0 +1,25 @@
+# LogicScript — datos léxicos v0.1
+# Formato: lemma <forma> -> <lema>
+
+version 0.1
+
+# Lluvia
+lemma llueve -> llover
+lemma llueva -> llover
+lemma llovio -> llover
+lemma llovera -> llover
+lemma lloveria -> llover
+
+# Llevar (paraguas, etc.)
+lemma llevo -> llevar
+lemma lleva -> llevar
+lemma llevara -> llevar
+lemma llevaria -> llevar
+lemma llevare -> llevar
+
+# Estudio / aprobar
+lemma estudio -> estudiar
+lemma estudie -> estudiar
+lemma apruebo -> aprobar
+lemma aprueba -> aprobar
+lemma apruebe -> aprobar

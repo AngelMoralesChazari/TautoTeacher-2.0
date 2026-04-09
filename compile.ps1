@@ -11,28 +11,11 @@ $javac = Join-Path $JdkHome "bin\javac.exe"
 $java = Join-Path $JdkHome "bin\java.exe"
 
 $root = $PSScriptRoot
-$dirs = @(
-    "src\main\java\tautoteacher2",
-    "src\main\java\tautoteacher2\ui",
-    "src\main\java\tautoteacher2\servicio",
-    "src\main\java\tautoteacher2\servicio\dto",
-    "src\main\java\tautoteacher2\core\logica",
-    "src\main\java\tautoteacher2\core\logica\parser",
-    "src\main\java\tautoteacher2\core\visualizacion",
-    "src\main\java\tautoteacher2\nlp\lexer",
-    "src\main\java\tautoteacher2\nlp\parser",
-    "src\main\java\tautoteacher2\nlp\lexicon",
-    "src\main\java\tautoteacher2\nlp\semantica"
-)
-
+$srcJava = Join-Path $root "src\main\java"
 $files = @()
-foreach ($rel in $dirs) {
-    $dir = Join-Path $root $rel
-    if (Test-Path $dir) {
-        $files += Get-ChildItem -Path $dir -Filter "*.java" -File | ForEach-Object { $_.FullName }
-    }
+if (Test-Path $srcJava) {
+    $files = Get-ChildItem -Path $srcJava -Recurse -Filter "*.java" -File | ForEach-Object { $_.FullName } | Sort-Object -Unique
 }
-$files = $files | Sort-Object -Unique
 
 if ($files.Count -eq 0) {
     Write-Error "No se encontraron fuentes en $root"
@@ -40,9 +23,15 @@ if ($files.Count -eq 0) {
 
 Push-Location $root
 try {
-    & $javac --release 25 -encoding UTF-8 -d out @files
-    Write-Host "OK: compilado con --release 25 en $root\out"
-    Write-Host "Ejecutar: & `"$java`" -cp out tautoteacher2.Main"
+    & $javac --release 17 -encoding UTF-8 -d out @files
+    $resSrc = Join-Path $root "src\main\resources"
+    if (Test-Path $resSrc) {
+        Copy-Item -Path $resSrc -Destination (Join-Path $root "out") -Recurse -Force
+        Write-Host "Recursos copiados a out\"
+    }
+    Write-Host "OK: compilado con --release 17 en $root\out"
+    Write-Host "Ejecutar app: & `"$java`" -cp out tautoteacher2.Main"
+    Write-Host "Demo LogicScript: & `"$java`" -cp out tautoteacher2.logicscript.LogicScriptCli `"si llueve entonces llevo paraguas`""
 }
 finally {
     Pop-Location
