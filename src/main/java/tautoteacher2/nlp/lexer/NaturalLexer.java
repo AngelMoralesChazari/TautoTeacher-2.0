@@ -9,7 +9,7 @@ import java.util.List;
  */
 public final class NaturalLexer {
 
-    private static final String[] PALABRAS_CLAVE = {
+    private static final String PALABRAS_CLAVE[] = {
             "en caso de que ",
             "entonces ",
             "si ",
@@ -17,7 +17,7 @@ public final class NaturalLexer {
             " o ",
     };
 
-    private static final TipoTokenNatural[] TIPOS = {
+    private static final TipoTokenNatural TIPOS[] = {
             TipoTokenNatural.EN_CASO_DE_QUE,
             TipoTokenNatural.ENTONCES,
             TipoTokenNatural.SI,
@@ -34,17 +34,19 @@ public final class NaturalLexer {
         int i = 0;
         int n = s.length();
         while (i < n) {
-            char c = s.charAt(i);
-            if (c == ' ' || c == ',') {
-                i++;
-                continue;
-            }
+            // Palabra clave antes de consumir espacios: patrones como " y " empiezan en espacio;
+            // si saltamos espacios primero, nunca coinciden tras un literal (p. ej. "a y b").
             int[] kw = encontrarPalabraClave(s, i);
             if (kw != null) {
                 int fin = kw[0];
                 int indiceTipo = kw[1];
                 salida.add(new TokenNatural(TIPOS[indiceTipo], PALABRAS_CLAVE[indiceTipo].trim()));
                 i = fin;
+                continue;
+            }
+            char c = s.charAt(i);
+            if (c == ' ' || c == ',') {
+                i++;
                 continue;
             }
             int j = finLiteral(s, i);
