@@ -2,6 +2,7 @@ package tautoteacher2.nlp.lexicon;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Base de conocimiento léxica mínima para LogicScript:
@@ -16,7 +17,15 @@ public class BaseConocimiento {
     private final Map<String, String> lemas = new HashMap<>();
 
     public BaseConocimiento() {
-        Map<String, String> desdeArchivo = LgsCargador.cargarLemasDesdeClasspath(RECURSO_LEMAS);
+        this(LgsCargador.cargarDesdeClasspath(RECURSO_LEMAS));
+    }
+
+    /**
+     * Usa el mismo {@link ContenidoLgs} que puede incluir patrones; aquí solo se consumen los lemas.
+     */
+    public BaseConocimiento(ContenidoLgs contenido) {
+        Objects.requireNonNull(contenido, "contenido");
+        Map<String, String> desdeArchivo = contenido.lemas();
         if (!desdeArchivo.isEmpty()) {
             lemas.putAll(desdeArchivo);
         } else {

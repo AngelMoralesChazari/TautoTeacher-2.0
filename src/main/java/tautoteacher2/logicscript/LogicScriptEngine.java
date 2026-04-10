@@ -9,18 +9,23 @@ import tautoteacher2.logicscript.ir.LogicExpr;
 import tautoteacher2.nlp.lexer.NaturalLexer;
 import tautoteacher2.nlp.lexer.TokenNatural;
 import tautoteacher2.nlp.lexicon.BaseConocimiento;
+import tautoteacher2.nlp.lexicon.ContenidoLgs;
+import tautoteacher2.nlp.lexicon.LgsCargador;
 import tautoteacher2.nlp.normalizacion.NormalizadorTexto;
 import tautoteacher2.nlp.semantica.SemanticMapper;
 
 /**
  * Orquesta normalización → lexemas (diagnóstico) → patrones → IR → emisión de fórmula.
- * Los patrones de alto nivel siguen en regex hasta migrar a parser sobre tokens.
+ * Patrones semánticos: declarativos en {@code logicscript/core.lgs} o respaldo embebido en {@link SemanticMapper}.
  */
 public class LogicScriptEngine {
+    private static final String RECURSO_LGS = "logicscript/core.lgs";
+
     private final NormalizadorTexto normalizador = new NormalizadorTexto();
     private final NaturalLexer lexer = new NaturalLexer();
-    private final BaseConocimiento baseConocimiento = new BaseConocimiento();
-    private final SemanticMapper semanticMapper = new SemanticMapper(baseConocimiento);
+    private final ContenidoLgs contenidoLgs = LgsCargador.cargarDesdeClasspath(RECURSO_LGS);
+    private final BaseConocimiento baseConocimiento = new BaseConocimiento(contenidoLgs);
+    private final SemanticMapper semanticMapper = new SemanticMapper(baseConocimiento, contenidoLgs.patronesSemanticos());
 
     public LogicScriptResult traducir(String textoOriginal) {
         List<String> pasosDeAnalisis = new ArrayList<>();

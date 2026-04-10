@@ -1,7 +1,7 @@
-# LogicScript — datos léxicos v0.1
-# Formato: lemma <forma> -> <lema>
+# LogicScript — datos léxicos y patrones v0.2
+# Formato: lemma, pattern (véase docs/LogicScript/FormatoLGS.md y Pattern.md)
 
-version 0.1
+version 0.2
 
 # Lluvia
 lemma llueve -> llover
@@ -23,3 +23,10 @@ lemma estudie -> estudiar
 lemma apruebo -> aprobar
 lemma aprueba -> aprobar
 lemma apruebe -> aprobar
+
+# Patrones semánticos (orden = prioridad de coincidencia)
+pattern SI_ENTONCES si literal entonces literal => imp left=1 right=3
+pattern CONSECUENTE_SI_ANTECEDENTE literal si literal => imp left=2 right=0
+pattern EN_CASO_DE_QUE en_caso_de_que literal literal => imp left=1 right=2
+pattern CONJUNCION literal y literal => and left=0 right=2
+pattern DISYUNCION literal o literal => or left=0 right=2

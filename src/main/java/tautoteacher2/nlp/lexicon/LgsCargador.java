@@ -5,14 +5,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
+import tautoteacher2.nlp.lexer.TipoTokenNatural;
+
 /**
- * Carga archivos {@code .lgs} con sintaxis mínima (v0.1): lemas y metadatos ignorables.
- * Formato descrito en {@code docs/LogicScript/FormatoLGS.md}.
+ * Carga archivos {@code .lgs} (v0.2): lemas, patrones semánticos y metadatos ignorables.
+ * Formato: {@code docs/LogicScript/FormatoLGS.md} y {@code docs/LogicScript/Pattern.md}.
  */
 public final class LgsCargador {
 
@@ -20,10 +24,10 @@ public final class LgsCargador {
     }
 
     /**
-     * Carga lemas desde el classpath, p. ej. {@code logicscript/core.lgs}.
-     * Si el recurso no existe o hay error de lectura, devuelve mapa vacío.
+     * Carga lemas y patrones desde el classpath, p. ej. {@code logicscript/core.lgs}.
+     * Si el recurso no existe o hay error de lectura, devuelve {@link ContenidoLgs#vacio()}.
      */
-    public static Map<String, String> cargarLemasDesdeClasspath(String rutaRecurso) {
+    public static ContenidoLgs cargarDesdeClasspath(String rutaRecurso) {
         Objects.requireNonNull(rutaRecurso, "rutaRecurso");
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         if (cl == null) {
@@ -31,16 +35,24 @@ public final class LgsCargador {
         }
         try (InputStream in = cl.getResourceAsStream(rutaRecurso)) {
             if (in == null) {
-                return Collections.emptyMap();
+                return ContenidoLgs.vacio();
             }
-            return cargarLemas(in);
+            return cargar(in);
         } catch (IOException e) {
-            return Collections.emptyMap();
+            return ContenidoLgs.vacio();
         }
     }
 
-    public static Map<String, String> cargarLemas(InputStream entrada) throws IOException {
+    /**
+     * Compatibilidad: solo el mapa de lemas del recurso indicado.
+     */
+    public static Map<String, String> cargarLemasDesdeClasspath(String rutaRecurso) {
+        return cargarDesdeClasspath(rutaRecurso).lemas();
+    }
+
+    public static ContenidoLgs cargar(InputStream entrada) throws IOException {
         Map<String, String> lemas = new LinkedHashMap<>();
+        List<PatronSemanticoLgs> patrones = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new InputStreamReader(entrada, StandardCharsets.UTF_8))) {
             String linea;
             int num = 0;
@@ -50,26 +62,115 @@ public final class LgsCargador {
                 if (t.isEmpty() || t.startsWith("#")) {
                     continue;
                 }
-                if (t.toLowerCase().startsWith("version")) {
+                String tl = t.toLowerCase(Locale.ROOT);
+                if (tl.startsWith("version")) {
                     continue;
                 }
-                if (t.toLowerCase().startsWith("lemma ")) {
-                    String resto = t.substring(6).trim();
-                    int flecha = resto.indexOf("->");
-                    if (flecha < 0) {
-                        throw new IOException("Línea " + num + ": falta '->' en lemma: " + linea);
-                    }
-                    String forma = resto.substring(0, flecha).trim().toLowerCase();
-                    String lema = resto.substring(flecha + 2).trim().toLowerCase();
-                    if (forma.isEmpty() || lema.isEmpty()) {
-                        throw new IOException("Línea " + num + ": forma o lema vacío: " + linea);
-                    }
-                    lemas.put(forma, lema);
+                if (tl.startsWith("lemma ")) {
+                    parsearLemma(num, t, lemas);
+                    continue;
+                }
+                if (tl.startsWith("pattern ")) {
+                    patrones.add(parsearPattern(num, t));
                     continue;
                 }
                 throw new IOException("Línea " + num + ": directiva no reconocida: " + linea);
             }
         }
-        return Collections.unmodifiableMap(lemas);
+        return new ContenidoLgs(lemas, patrones);
+    }
+
+    public static Map<String, String> cargarLemas(InputStream entrada) throws IOException {
+        return cargar(entrada).lemas();
+    }
+
+    private static void parsearLemma(int numLinea, String linea, Map<String, String> lemas) throws IOException {
+        String resto = linea.substring(6).trim();
+        int flecha = resto.indexOf("->");
+        if (flecha < 0) {
+            throw new IOException("Línea " + numLinea + ": falta '->' en lemma: " + linea);
+        }
+        String forma = resto.substring(0, flecha).trim().toLowerCase(Locale.ROOT);
+        String lema = resto.substring(flecha + 2).trim().toLowerCase(Locale.ROOT);
+        if (forma.isEmpty() || lema.isEmpty()) {
+            throw new IOException("Línea " + numLinea + ": forma o lema vacío: " + linea);
+        }
+        lemas.put(forma, lema);
+    }
+
+    private static PatronSemanticoLgs parsearPattern(int numLinea, String linea) throws IOException {
+        int flechaDoble = linea.indexOf("=>");
+        if (flechaDoble < 0) {
+            throw new IOException("Línea " + numLinea + ": falta '=>' en pattern: " + linea);
+        }
+        String izquierda = linea.substring(0, flechaDoble).trim();
+        String derecha = linea.substring(flechaDoble + 2).trim();
+        if (!izquierda.toLowerCase(Locale.ROOT).startsWith("pattern ")) {
+            throw new IOException("Línea " + numLinea + ": se esperaba 'pattern': " + linea);
+        }
+        String tokensPatron = izquierda.substring(8).trim();
+        String[] partesForma = tokensPatron.split("\\s+");
+        if (partesForma.length < 2) {
+            throw new IOException("Línea " + numLinea + ": pattern necesita nombre y al menos un token: " + linea);
+        }
+        String nombre = partesForma[0];
+        List<TipoTokenNatural> forma = new ArrayList<>();
+        for (int i = 1; i < partesForma.length; i++) {
+            forma.add(parsearTipoToken(numLinea, partesForma[i]));
+        }
+        String[] partesSalida = derecha.split("\\s+");
+        if (partesSalida.length < 3) {
+            throw new IOException("Línea " + numLinea + ": tras '=>' se espera p. ej. 'imp left=0 right=2': " + linea);
+        }
+        TipoSalidaIrPatron tipoIr = parsearTipoIr(numLinea, partesSalida[0]);
+        int left = -1;
+        int right = -1;
+        for (int i = 1; i < partesSalida.length; i++) {
+            String p = partesSalida[i].toLowerCase(Locale.ROOT);
+            if (p.startsWith("left=")) {
+                left = parsearIndice(numLinea, p.substring(5));
+            } else if (p.startsWith("right=")) {
+                right = parsearIndice(numLinea, p.substring(6));
+            }
+        }
+        if (left < 0 || right < 0) {
+            throw new IOException("Línea " + numLinea + ": faltan left= e right= en pattern: " + linea);
+        }
+        try {
+            return new PatronSemanticoLgs(nombre, forma, tipoIr, left, right);
+        } catch (IllegalArgumentException ex) {
+            throw new IOException("Línea " + numLinea + ": " + ex.getMessage() + " — " + linea, ex);
+        }
+    }
+
+    private static int parsearIndice(int numLinea, String s) throws IOException {
+        try {
+            return Integer.parseInt(s.trim());
+        } catch (NumberFormatException e) {
+            throw new IOException("Línea " + numLinea + ": índice inválido: " + s);
+        }
+    }
+
+    private static TipoSalidaIrPatron parsearTipoIr(int numLinea, String token) throws IOException {
+        String t = token.trim().toLowerCase(Locale.ROOT);
+        return switch (t) {
+            case "imp", "implica", "implies" -> TipoSalidaIrPatron.IMP;
+            case "and", "y" -> TipoSalidaIrPatron.AND;
+            case "or", "o" -> TipoSalidaIrPatron.OR;
+            default -> throw new IOException("Línea " + numLinea + ": tipo IR desconocido (use imp, and, or): " + token);
+        };
+    }
+
+    private static TipoTokenNatural parsearTipoToken(int numLinea, String token) throws IOException {
+        String t = token.trim().toLowerCase(Locale.ROOT).replace('-', '_');
+        return switch (t) {
+            case "si" -> TipoTokenNatural.SI;
+            case "entonces" -> TipoTokenNatural.ENTONCES;
+            case "en_caso_de_que" -> TipoTokenNatural.EN_CASO_DE_QUE;
+            case "y" -> TipoTokenNatural.Y;
+            case "o" -> TipoTokenNatural.O;
+            case "literal" -> TipoTokenNatural.LITERAL;
+            default -> throw new IOException("Línea " + numLinea + ": token de forma desconocido: " + token);
+        };
     }
 }

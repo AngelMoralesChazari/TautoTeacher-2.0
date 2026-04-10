@@ -9,16 +9,33 @@ import tautoteacher2.logicscript.ir.OrExpr;
 import tautoteacher2.nlp.lexer.TipoTokenNatural;
 import tautoteacher2.nlp.lexer.TokenNatural;
 import tautoteacher2.nlp.lexicon.BaseConocimiento;
+import tautoteacher2.nlp.lexicon.PatronSemanticoLgs;
+import tautoteacher2.nlp.lexicon.TipoSalidaIrPatron;
 
 /**
  * Traduce secuencias léxicas de lenguaje natural a la IR de LogicScript.
- * Implementa patrones MVP para condicional, conjunción, disyunción y negación.
+ * Los patrones se cargan desde {@code logicscript/core.lgs} (directiva {@code pattern});
+ * si el archivo no declara ninguno, se usan los mismos cinco patrones MVP embebidos.
  */
 public class SemanticMapper {
     private final BaseConocimiento baseConocimiento;
+    private final List<PatronSemanticoLgs> patrones;
 
     public SemanticMapper(BaseConocimiento baseConocimiento) {
+        this(baseConocimiento, null);
+    }
+
+    /**
+     * @param patronesDesdeArchivo lista desde {@link tautoteacher2.nlp.lexicon.ContenidoLgs#patronesSemanticos()};
+     *                             si es null o vacía, se aplican patrones predeterminados en código.
+     */
+    public SemanticMapper(BaseConocimiento baseConocimiento, List<PatronSemanticoLgs> patronesDesdeArchivo) {
         this.baseConocimiento = baseConocimiento;
+        if (patronesDesdeArchivo == null || patronesDesdeArchivo.isEmpty()) {
+            this.patrones = patronesPredeterminados();
+        } else {
+            this.patrones = List.copyOf(patronesDesdeArchivo);
+        }
     }
 
     public LogicExpr mapearBloque(String textoBloque, List<TokenNatural> tokens, List<String> pasosDeAnalisis) {
@@ -26,34 +43,11 @@ public class SemanticMapper {
             return null;
         }
 
-        // si X entonces Y
-        if (coincideForma(tokens, TipoTokenNatural.SI, TipoTokenNatural.LITERAL, TipoTokenNatural.ENTONCES, TipoTokenNatural.LITERAL)) {
-            pasosDeAnalisis.add("SemanticMapper: patrón SI_ENTONCES detectado.");
-            return new ImpExpr(atomoDesde(tokens.get(1).getLexema()), atomoDesde(tokens.get(3).getLexema()));
-        }
-
-        // Y si X
-        if (coincideForma(tokens, TipoTokenNatural.LITERAL, TipoTokenNatural.SI, TipoTokenNatural.LITERAL)) {
-            pasosDeAnalisis.add("SemanticMapper: patrón CONSECUENTE_SI_ANTECEDENTE detectado.");
-            return new ImpExpr(atomoDesde(tokens.get(2).getLexema()), atomoDesde(tokens.get(0).getLexema()));
-        }
-
-        // en caso de que X, Y
-        if (coincideForma(tokens, TipoTokenNatural.EN_CASO_DE_QUE, TipoTokenNatural.LITERAL, TipoTokenNatural.LITERAL)) {
-            pasosDeAnalisis.add("SemanticMapper: patrón EN_CASO_DE_QUE detectado.");
-            return new ImpExpr(atomoDesde(tokens.get(1).getLexema()), atomoDesde(tokens.get(2).getLexema()));
-        }
-
-        // X y Y
-        if (coincideForma(tokens, TipoTokenNatural.LITERAL, TipoTokenNatural.Y, TipoTokenNatural.LITERAL)) {
-            pasosDeAnalisis.add("SemanticMapper: patrón CONJUNCION detectado.");
-            return new AndExpr(atomoDesde(tokens.get(0).getLexema()), atomoDesde(tokens.get(2).getLexema()));
-        }
-
-        // X o Y
-        if (coincideForma(tokens, TipoTokenNatural.LITERAL, TipoTokenNatural.O, TipoTokenNatural.LITERAL)) {
-            pasosDeAnalisis.add("SemanticMapper: patrón DISYUNCION detectado.");
-            return new OrExpr(atomoDesde(tokens.get(0).getLexema()), atomoDesde(tokens.get(2).getLexema()));
+        for (PatronSemanticoLgs p : patrones) {
+            if (coincideForma(tokens, p.forma())) {
+                pasosDeAnalisis.add("SemanticMapper: patrón " + p.nombre() + " detectado.");
+                return construirDesdePatron(p, tokens);
+            }
         }
 
         String literal = primerLiteral(tokens);
@@ -69,6 +63,52 @@ public class SemanticMapper {
         return atomoDesde(textoBloque);
     }
 
+    private LogicExpr construirDesdePatron(PatronSemanticoLgs p, List<TokenNatural> tokens) {
+        String lexIzq = tokens.get(p.indiceIzq()).getLexema();
+        String lexDer = tokens.get(p.indiceDer()).getLexema();
+        AtomExpr a = atomoDesde(lexIzq);
+        AtomExpr b = atomoDesde(lexDer);
+        return switch (p.tipoIr()) {
+            case IMP -> new ImpExpr(a, b);
+            case AND -> new AndExpr(a, b);
+            case OR -> new OrExpr(a, b);
+        };
+    }
+
+    private static List<PatronSemanticoLgs> patronesPredeterminados() {
+        return List.of(
+                new PatronSemanticoLgs(
+                        "SI_ENTONCES",
+                        List.of(TipoTokenNatural.SI, TipoTokenNatural.LITERAL, TipoTokenNatural.ENTONCES, TipoTokenNatural.LITERAL),
+                        TipoSalidaIrPatron.IMP,
+                        1,
+                        3),
+                new PatronSemanticoLgs(
+                        "CONSECUENTE_SI_ANTECEDENTE",
+                        List.of(TipoTokenNatural.LITERAL, TipoTokenNatural.SI, TipoTokenNatural.LITERAL),
+                        TipoSalidaIrPatron.IMP,
+                        2,
+                        0),
+                new PatronSemanticoLgs(
+                        "EN_CASO_DE_QUE",
+                        List.of(TipoTokenNatural.EN_CASO_DE_QUE, TipoTokenNatural.LITERAL, TipoTokenNatural.LITERAL),
+                        TipoSalidaIrPatron.IMP,
+                        1,
+                        2),
+                new PatronSemanticoLgs(
+                        "CONJUNCION",
+                        List.of(TipoTokenNatural.LITERAL, TipoTokenNatural.Y, TipoTokenNatural.LITERAL),
+                        TipoSalidaIrPatron.AND,
+                        0,
+                        2),
+                new PatronSemanticoLgs(
+                        "DISYUNCION",
+                        List.of(TipoTokenNatural.LITERAL, TipoTokenNatural.O, TipoTokenNatural.LITERAL),
+                        TipoSalidaIrPatron.OR,
+                        0,
+                        2));
+    }
+
     private AtomExpr atomoDesde(String fragmentoOriginal) {
         String limpio = fragmentoOriginal == null ? "" : fragmentoOriginal.trim();
         boolean negada = false;
@@ -80,12 +120,12 @@ public class SemanticMapper {
         return new AtomExpr(canonico.isBlank() ? limpio : canonico, negada);
     }
 
-    private static boolean coincideForma(List<TokenNatural> tokens, TipoTokenNatural... forma) {
-        if (tokens.size() != forma.length) {
+    private static boolean coincideForma(List<TokenNatural> tokens, List<TipoTokenNatural> forma) {
+        if (tokens.size() != forma.size()) {
             return false;
         }
-        for (int i = 0; i < forma.length; i++) {
-            if (tokens.get(i).getTipo() != forma[i]) {
+        for (int i = 0; i < forma.size(); i++) {
+            if (tokens.get(i).getTipo() != forma.get(i)) {
                 return false;
             }
         }
