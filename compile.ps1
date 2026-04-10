@@ -32,6 +32,7 @@ try {
     Write-Host "OK: compilado con --release 17 en $root\out"
     Write-Host "Ejecutar app: & `"$java`" -cp out tautoteacher2.Main"
     Write-Host "Demo LogicScript: & `"$java`" -cp out tautoteacher2.logicscript.LogicScriptCli `"si llueve entonces llevo paraguas`""
+    Write-Host "Regresion LogicScript: & `"$java`" -cp out tautoteacher2.logicscript.LogicScriptRegressionHarness"
 }
 finally {
     Pop-Location
