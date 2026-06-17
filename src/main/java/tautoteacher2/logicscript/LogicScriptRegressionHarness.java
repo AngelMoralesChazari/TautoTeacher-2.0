@@ -42,6 +42,7 @@ public final class LogicScriptRegressionHarness {
         casos.add(new Caso("conjuncion", "llueve y estudio", true, "(p " + AND + " q)"));
         casos.add(new Caso("disyuncion", "llueve o estudio", true, "(p " + OR + " q)"));
         casos.add(new Caso("lemmas_si", "si estudio entonces apruebo", true, "(p " + IMP + " q)"));
+        casos.add(new Caso("si_eliptico", "si estudio apruebo", true, "(p " + IMP + " q)"));
         casos.add(new Caso(
                 "dos_bloques",
                 "si llueve entonces llevo paraguas, en caso de que estudio, apruebo",
