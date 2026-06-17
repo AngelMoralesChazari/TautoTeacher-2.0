@@ -15,7 +15,7 @@ import tautoteacher2.nlp.lexicon.TipoSalidaIrPatron;
 /**
  * Traduce secuencias léxicas de lenguaje natural a la IR de LogicScript.
  * Los patrones se cargan desde {@code logicscript/core.lgs} (directiva {@code pattern});
- * si el archivo no declara ninguno, se usan los mismos cinco patrones MVP embebidos.
+ * si el archivo no declara ninguno, se usan los patrones MVP embebidos en código.
  */
 public class SemanticMapper {
     private final BaseConocimiento baseConocimiento;
@@ -83,6 +83,12 @@ public class SemanticMapper {
                         TipoSalidaIrPatron.IMP,
                         1,
                         3),
+                new PatronSemanticoLgs(
+                        "SI_ELIPTICO",
+                        List.of(TipoTokenNatural.SI, TipoTokenNatural.LITERAL, TipoTokenNatural.LITERAL),
+                        TipoSalidaIrPatron.IMP,
+                        1,
+                        2),
                 new PatronSemanticoLgs(
                         "CONSECUENTE_SI_ANTECEDENTE",
                         List.of(TipoTokenNatural.LITERAL, TipoTokenNatural.SI, TipoTokenNatural.LITERAL),
