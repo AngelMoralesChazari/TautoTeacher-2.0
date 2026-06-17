@@ -24,10 +24,10 @@ public final class LgsCargador {
     }
 
     /**
-     * Carga lemas y patrones desde el classpath, p. ej. {@code logicscript/core.lgs}.
-     * Si el recurso no existe o hay error de lectura, devuelve {@link ContenidoLgs#vacio()}.
+     * Carga lemas y patrones desde el classpath con diagnóstico explícito.
+     * Preferir este método frente a {@link #cargarDesdeClasspath(String)} en el motor LogicScript.
      */
-    public static ContenidoLgs cargarDesdeClasspath(String rutaRecurso) {
+    public static ResultadoCargaLgs cargarConDiagnostico(String rutaRecurso) {
         Objects.requireNonNull(rutaRecurso, "rutaRecurso");
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         if (cl == null) {
@@ -35,12 +35,54 @@ public final class LgsCargador {
         }
         try (InputStream in = cl.getResourceAsStream(rutaRecurso)) {
             if (in == null) {
-                return ContenidoLgs.vacio();
+                return new ResultadoCargaLgs(
+                        ContenidoLgs.vacio(),
+                        EstadoCargaLgs.RECURSO_NO_ENCONTRADO,
+                        "No se encontró el recurso en el classpath. Copie src/main/resources a out al compilar.",
+                        rutaRecurso);
             }
-            return cargar(in);
+            return cargarConDiagnostico(in, rutaRecurso);
         } catch (IOException e) {
+            return new ResultadoCargaLgs(
+                    ContenidoLgs.vacio(),
+                    EstadoCargaLgs.ERROR_LECTURA,
+                    e.getMessage(),
+                    rutaRecurso);
+        }
+    }
+
+    /**
+     * Parsea un stream ya abierto (útil en pruebas y herramientas).
+     */
+    public static ResultadoCargaLgs cargarConDiagnostico(InputStream entrada, String rutaEtiqueta) {
+        Objects.requireNonNull(entrada, "entrada");
+        try {
+            ContenidoLgs contenido = cargar(entrada);
+            return new ResultadoCargaLgs(contenido, EstadoCargaLgs.EXITO, "", rutaEtiqueta);
+        } catch (IOException e) {
+            EstadoCargaLgs estado = mensajePareceSintaxis(e)
+                    ? EstadoCargaLgs.ERROR_SINTAXIS
+                    : EstadoCargaLgs.ERROR_LECTURA;
+            return new ResultadoCargaLgs(ContenidoLgs.vacio(), estado, e.getMessage(), rutaEtiqueta);
+        }
+    }
+
+    /**
+     * Carga lemas y patrones desde el classpath, p. ej. {@code logicscript/core.lgs}.
+     * Si el recurso no existe o hay error, devuelve {@link ContenidoLgs#vacio()} sin mensaje
+     * (uso legacy; el motor usa {@link #cargarConDiagnostico(String)}).
+     */
+    public static ContenidoLgs cargarDesdeClasspath(String rutaRecurso) {
+        ResultadoCargaLgs r = cargarConDiagnostico(rutaRecurso);
+        if (r.bloqueaTraduccion() || r.estado() == EstadoCargaLgs.RECURSO_NO_ENCONTRADO) {
             return ContenidoLgs.vacio();
         }
+        return r.contenido();
+    }
+
+    private static boolean mensajePareceSintaxis(IOException e) {
+        String m = e.getMessage();
+        return m != null && m.contains("Línea ");
     }
 
     /**
