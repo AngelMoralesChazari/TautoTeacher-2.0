@@ -44,6 +44,16 @@ public final class LogicScriptRegressionHarness {
         casos.add(new Caso("lemmas_si", "si estudio entonces apruebo", true, "(p " + IMP + " q)"));
         casos.add(new Caso("si_eliptico", "si estudio apruebo", true, "(p " + IMP + " q)"));
         casos.add(new Caso(
+                "si_eliptico_negado",
+                "si no estudio no apruebo",
+                true,
+                "(\u00acp " + IMP + " \u00acq)"));
+        casos.add(new Caso(
+                "composicion_coma_si",
+                "si estudio apruebo, si no estudio no apruebo",
+                true,
+                "((p " + IMP + " q) " + AND + " (\u00acp " + IMP + " \u00acq))"));
+        casos.add(new Caso(
                 "dos_bloques",
                 "si llueve entonces llevo paraguas, en caso de que estudio, apruebo",
                 true,
