@@ -66,7 +66,7 @@ public final class NaturalLexer {
      */
     private static void agregarLiterales(List<TokenNatural> salida, String lit) {
         if (ultimoTokenEsSi(salida) && literalSinConectoresInternos(lit)) {
-            for (String palabra : lit.split("\\s+")) {
+            for (String palabra : fusionarPrefijosNo(lit.split("\\s+"))) {
                 if (!palabra.isEmpty()) {
                     salida.add(new TokenNatural(TipoTokenNatural.LITERAL, palabra));
                 }
@@ -106,6 +106,24 @@ public final class NaturalLexer {
             }
         }
         return false;
+    }
+
+    /** Une {@code no} con la palabra siguiente (*no estudio*) para negación en el mapper. */
+    private static List<String> fusionarPrefijosNo(String[] palabras) {
+        List<String> fusionadas = new ArrayList<>();
+        for (int i = 0; i < palabras.length; i++) {
+            String p = palabras[i];
+            if (p.isEmpty()) {
+                continue;
+            }
+            if ("no".equals(p) && i + 1 < palabras.length && !palabras[i + 1].isEmpty()) {
+                fusionadas.add("no " + palabras[i + 1]);
+                i++;
+            } else {
+                fusionadas.add(p);
+            }
+        }
+        return fusionadas;
     }
 
     private static int[] encontrarPalabraClave(String s, int i) {
