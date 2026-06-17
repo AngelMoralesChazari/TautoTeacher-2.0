@@ -54,21 +54,26 @@ public class LogicScriptEngine {
         List<TokenNatural> lexemas = lexer.tokenizar(texto);
         pasosDeAnalisis.add("Lexemas LN: " + lexemas);
 
-        String partes[] = texto.split("\\s*,\\s*en caso de que\\s+", 2);
-        LogicExpr principal = traducirBloque(partes[0], pasosDeAnalisis);
-        if (principal == null) {
+        List<String> segmentos = segmentosCompuestos(texto);
+        if (segmentos.isEmpty()) {
             return LogicScriptResult.error(
                     "No pude mapear el enunciado a una forma lógica con las reglas actuales.",
                     pasosDeAnalisis);
         }
+        if (segmentos.size() > 1) {
+            pasosDeAnalisis.add("Composición: " + segmentos.size() + " bloques unidos por conjunción (∧).");
+        }
 
-        LogicExpr expresionFinal = principal;
-        if (partes.length == 2) {
-            LogicExpr secundaria = traducirBloque("en caso de que " + partes[1], pasosDeAnalisis);
-            if (secundaria != null) {
-                expresionFinal = new AndExpr(principal, secundaria);
-                pasosDeAnalisis.add("Composición por conjunción de dos bloques.");
+        LogicExpr expresionFinal = null;
+        for (int i = 0; i < segmentos.size(); i++) {
+            pasosDeAnalisis.add("Bloque " + (i + 1) + ": " + segmentos.get(i));
+            LogicExpr bloque = traducirBloque(segmentos.get(i), pasosDeAnalisis);
+            if (bloque == null) {
+                return LogicScriptResult.error(
+                        "No pude mapear el enunciado a una forma lógica con las reglas actuales.",
+                        pasosDeAnalisis);
             }
+            expresionFinal = expresionFinal == null ? bloque : new AndExpr(expresionFinal, bloque);
         }
 
         String formula = EmitidorFormula.emitir(expresionFinal, registro, pasosDeAnalisis);
@@ -92,5 +97,29 @@ public class LogicScriptEngine {
         }
         pasosDeAnalisis.add("Fallback local: átomo simple.");
         return new AtomExpr(baseConocimiento.canonicalizarFragmento(limpio), false);
+    }
+
+    /**
+     * Parte el texto en bloques traducibles: coma seguida de {@code si } (nueva cláusula condicional)
+     * y el caso especial {@code , en caso de que} (segundo bloque con prefijo restaurado).
+     */
+    private static List<String> segmentosCompuestos(String texto) {
+        List<String> segmentos = new ArrayList<>();
+        String[] porComaSi = texto.split("\\s*,\\s*(?=si\\s)", -1);
+        for (String tramo : porComaSi) {
+            String limpio = tramo.trim();
+            if (limpio.isEmpty()) {
+                continue;
+            }
+            String[] porEnCaso = limpio.split("\\s*,\\s*en caso de que\\s+", 2);
+            segmentos.add(porEnCaso[0].trim());
+            if (porEnCaso.length == 2) {
+                String segundo = porEnCaso[1].trim();
+                if (!segundo.isEmpty()) {
+                    segmentos.add("en caso de que " + segundo);
+                }
+            }
+        }
+        return segmentos;
     }
 }
