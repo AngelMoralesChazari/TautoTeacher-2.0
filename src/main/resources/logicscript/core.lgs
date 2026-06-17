@@ -26,6 +26,7 @@ lemma apruebe -> aprobar
 
 # Patrones semánticos (orden = prioridad de coincidencia)
 pattern SI_ENTONCES si literal entonces literal => imp left=1 right=3
+pattern SI_ELIPTICO si literal literal => imp left=1 right=2
 pattern CONSECUENTE_SI_ANTECEDENTE literal si literal => imp left=2 right=0
 pattern EN_CASO_DE_QUE en_caso_de_que literal literal => imp left=1 right=2
 pattern CONJUNCION literal y literal => and left=0 right=2
