@@ -70,7 +70,7 @@ public class TautoTeacherApp {
         String enunciado = panelEntrada.getTextoLenguajeNatural().trim();
         if (enunciado.isEmpty()) {
             panelResultado.limpiarIcono();
-            panelResultado.setResultado("Por favor ingrese un enunciado en lenguaje natural.", COLOR_ERROR);
+            panelResultado.setResultado("Por favor ingrese un enunciado.", COLOR_ERROR);
             return;
         }
 

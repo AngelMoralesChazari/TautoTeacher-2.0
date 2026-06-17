@@ -9,7 +9,7 @@ import java.util.Map;
  * Asigna símbolos {@code p, q, r, …} a fragmentos de texto normalizados de forma estable en una sola traducción.
  */
 public final class RegistroProposiciones {
-    private static final char[] SIMBOLOS = "pqrstuvwxyzabcdefghijklmno".toCharArray();
+    private static final char SIMBOLOS[] = "pqrstuvwxyzabcdefghijklmno".toCharArray();
 
     private final LinkedHashMap<String, String> claveASimbolo = new LinkedHashMap<>();
 
