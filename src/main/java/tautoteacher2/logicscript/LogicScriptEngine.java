@@ -10,7 +10,9 @@ import tautoteacher2.nlp.lexer.NaturalLexer;
 import tautoteacher2.nlp.lexer.TokenNatural;
 import tautoteacher2.nlp.lexicon.BaseConocimiento;
 import tautoteacher2.nlp.lexicon.ContenidoLgs;
+import tautoteacher2.nlp.lexicon.EstadoCargaLgs;
 import tautoteacher2.nlp.lexicon.LgsCargador;
+import tautoteacher2.nlp.lexicon.ResultadoCargaLgs;
 import tautoteacher2.nlp.normalizacion.NormalizadorTexto;
 import tautoteacher2.nlp.semantica.SemanticMapper;
 
@@ -23,12 +25,25 @@ public class LogicScriptEngine {
 
     private final NormalizadorTexto normalizador = new NormalizadorTexto();
     private final NaturalLexer lexer = new NaturalLexer();
-    private final ContenidoLgs contenidoLgs = LgsCargador.cargarDesdeClasspath(RECURSO_LGS);
+    private final ResultadoCargaLgs resultadoCargaLgs = LgsCargador.cargarConDiagnostico(RECURSO_LGS);
+    private final ContenidoLgs contenidoLgs = resultadoCargaLgs.bloqueaTraduccion()
+            ? ContenidoLgs.vacio()
+            : resultadoCargaLgs.contenido();
     private final BaseConocimiento baseConocimiento = new BaseConocimiento(contenidoLgs);
     private final SemanticMapper semanticMapper = new SemanticMapper(baseConocimiento, contenidoLgs.patronesSemanticos());
 
     public LogicScriptResult traducir(String textoOriginal) {
         List<String> pasosDeAnalisis = new ArrayList<>();
+
+        if (resultadoCargaLgs.bloqueaTraduccion()) {
+            pasosDeAnalisis.add("Error de carga LogicScript: " + resultadoCargaLgs.mensajeParaUsuario());
+            return LogicScriptResult.error(resultadoCargaLgs.mensajeParaUsuario(), pasosDeAnalisis);
+        }
+        if (resultadoCargaLgs.estado() == EstadoCargaLgs.RECURSO_NO_ENCONTRADO) {
+            pasosDeAnalisis.add("Advertencia: " + resultadoCargaLgs.mensajeParaUsuario()
+                    + " Se usan lemas y patrones embebidos.");
+        }
+
         RegistroProposiciones registro = new RegistroProposiciones();
 
         String texto = normalizador.normalizar(textoOriginal);
@@ -39,7 +54,7 @@ public class LogicScriptEngine {
         List<TokenNatural> lexemas = lexer.tokenizar(texto);
         pasosDeAnalisis.add("Lexemas LN: " + lexemas);
 
-        String[] partes = texto.split("\\s*,\\s*en caso de que\\s+", 2);
+        String partes[] = texto.split("\\s*,\\s*en caso de que\\s+", 2);
         LogicExpr principal = traducirBloque(partes[0], pasosDeAnalisis);
         if (principal == null) {
             return LogicScriptResult.error(
