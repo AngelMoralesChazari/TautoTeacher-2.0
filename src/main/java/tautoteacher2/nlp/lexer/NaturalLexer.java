@@ -52,11 +52,60 @@ public final class NaturalLexer {
             int j = finLiteral(s, i);
             String lit = s.substring(i, j).trim();
             if (!lit.isEmpty()) {
-                salida.add(new TokenNatural(TipoTokenNatural.LITERAL, lit));
+                agregarLiterales(salida, lit);
             }
             i = j;
         }
         return salida;
+    }
+
+    /**
+     * Tras {@code si}, frases elípticas (*si estudio apruebo*) se parten en un literal por palabra
+     * si no hay conectores internos; tras {@code entonces} los complementos multi-palabra siguen
+     * siendo un solo literal (*llevo paraguas*).
+     */
+    private static void agregarLiterales(List<TokenNatural> salida, String lit) {
+        if (ultimoTokenEsSi(salida) && literalSinConectoresInternos(lit)) {
+            for (String palabra : lit.split("\\s+")) {
+                if (!palabra.isEmpty()) {
+                    salida.add(new TokenNatural(TipoTokenNatural.LITERAL, palabra));
+                }
+            }
+            return;
+        }
+        salida.add(new TokenNatural(TipoTokenNatural.LITERAL, lit));
+    }
+
+    private static boolean ultimoTokenEsSi(List<TokenNatural> salida) {
+        return !salida.isEmpty() && salida.get(salida.size() - 1).getTipo() == TipoTokenNatural.SI;
+    }
+
+    private static boolean literalSinConectoresInternos(String lit) {
+        if (!lit.contains(" ")) {
+            return false;
+        }
+        for (String p : PALABRAS_CLAVE) {
+            String palabra = p.trim();
+            if (palabra.isEmpty()) {
+                continue;
+            }
+            if (contieneComoPalabra(lit, palabra)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean contieneComoPalabra(String lit, String palabra) {
+        if (lit.contains(palabra) && palabra.contains(" ")) {
+            return true;
+        }
+        for (String w : lit.split("\\s+")) {
+            if (w.equals(palabra)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static int[] encontrarPalabraClave(String s, int i) {
