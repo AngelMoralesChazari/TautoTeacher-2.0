@@ -1,8 +1,14 @@
 package tautoteacher2.logicscript;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import tautoteacher2.nlp.lexicon.EstadoCargaLgs;
+import tautoteacher2.nlp.lexicon.LgsCargador;
+import tautoteacher2.nlp.lexicon.ResultadoCargaLgs;
 
 /**
  * Pruebas de regresión del pipeline LogicScript (LN → fórmula).
@@ -26,6 +32,9 @@ public final class LogicScriptRegressionHarness {
     }
 
     public static void main(String[] args) {
+        int fallos = 0;
+        fallos += verificarDiagnosticoCargaLgs();
+
         List<Caso> casos = new ArrayList<>();
         casos.add(new Caso("si_entonces", "si llueve entonces llevo paraguas", true, "(p " + IMP + " q)"));
         casos.add(new Caso("consecuente_si", "llevo paraguas si llueve", true, "(p " + IMP + " q)"));
@@ -42,7 +51,6 @@ public final class LogicScriptRegressionHarness {
         casos.add(new Caso("solo_espacios", "   \t  ", false, ""));
 
         LogicScriptService servicio = new LogicScriptService();
-        int fallos = 0;
         for (Caso c : casos) {
             LogicScriptResult r = servicio.traducir(c.entrada());
             boolean okExito = r.isExito() == c.esperaExito();
@@ -61,11 +69,27 @@ public final class LogicScriptRegressionHarness {
             }
         }
         if (fallos == 0) {
-            System.out.println("LogicScriptRegressionHarness: OK (" + casos.size() + " casos).");
+            System.out.println("LogicScriptRegressionHarness: OK (" + casos.size() + " casos LN + diagnóstico .lgs).");
         } else {
-            System.err.println("LogicScriptRegressionHarness: " + fallos + " fallo(s) de " + casos.size() + ".");
+            System.err.println("LogicScriptRegressionHarness: " + fallos + " fallo(s).");
             System.exit(1);
         }
+    }
+
+    private static int verificarDiagnosticoCargaLgs() {
+        int fallos = 0;
+        String invalido = "lemma sin flecha\n";
+        ResultadoCargaLgs r = LgsCargador.cargarConDiagnostico(
+                new ByteArrayInputStream(invalido.getBytes(StandardCharsets.UTF_8)),
+                "test-invalido.lgs");
+        if (!r.bloqueaTraduccion() || r.estado() != EstadoCargaLgs.ERROR_SINTAXIS) {
+            fallos++;
+            System.err.println("FALLO [lgs_sintaxis]: se esperaba ERROR_SINTAXIS bloqueante");
+        } else if (!r.mensaje().contains("Línea 1")) {
+            fallos++;
+            System.err.println("FALLO [lgs_sintaxis]: mensaje sin número de línea: " + r.mensaje());
+        }
+        return fallos;
     }
 
     private static String repr(String s) {
