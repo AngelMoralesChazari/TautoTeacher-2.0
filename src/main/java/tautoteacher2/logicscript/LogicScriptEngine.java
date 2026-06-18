@@ -105,7 +105,7 @@ public class LogicScriptEngine {
      */
     private static List<String> segmentosCompuestos(String texto) {
         List<String> segmentos = new ArrayList<>();
-        String[] porComaSi = texto.split("\\s*,\\s*(?=si\\s)", -1);
+        String[] porComaSi = texto.split("\\s*,\\s*(?=(?:si|siempre que)\\s)", -1);
         for (String tramo : porComaSi) {
             String limpio = tramo.trim();
             if (limpio.isEmpty()) {
