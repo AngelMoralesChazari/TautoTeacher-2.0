@@ -22,6 +22,7 @@ public final class LogicScriptRegressionHarness {
     private static final String IMP = "\u2192";
     private static final String AND = "\u2227";
     private static final String OR = "\u2228";
+    private static final String IFF = "\u2194";
 
     private record Caso(String id, String entrada, boolean esperaExito, String formulaEsperada) {
         Caso {
@@ -53,6 +54,12 @@ public final class LogicScriptRegressionHarness {
                 "si estudio apruebo, si no estudio no apruebo",
                 true,
                 "((p " + IMP + " q) " + AND + " (\u00acp " + IMP + " \u00acq))"));
+        casos.add(new Caso("siempre_que_eliptico", "siempre que estudio apruebo", true, "(p " + IMP + " q)"));
+        casos.add(new Caso("siempre_que_entonces", "siempre que trabajo entonces descanso", true, "(p " + IMP + " q)"));
+        casos.add(new Caso("equivalencia", "apruebo si y solo si estudio", true, "(p " + IFF + " q)"));
+        casos.add(new Caso("lemmas_trabajo", "si trabajo descanso", true, "(p " + IMP + " q)"));
+        casos.add(new Caso("lemmas_practico", "practico si y solo si estudio", true, "(p " + IFF + " q)"));
+        casos.add(new Caso("conjuncion_clima", "solea y hace calor", true, "(p " + AND + " q)"));
         casos.add(new Caso(
                 "dos_bloques",
                 "si llueve entonces llevo paraguas, en caso de que estudio, apruebo",
