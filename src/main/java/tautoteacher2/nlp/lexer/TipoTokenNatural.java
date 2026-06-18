@@ -11,6 +11,10 @@ public enum TipoTokenNatural {
     ENTONCES,
     /** Locución de condición alternativa */
     EN_CASO_DE_QUE,
+    /** Condición equivalente (*si y solo si*) */
+    SI_Y_SOLO_SI,
+    /** Condición suficiente (*siempre que*) */
+    SIEMPRE_QUE,
     /** Conjunción coordinante */
     Y,
     /** Disyunción coordinante */
