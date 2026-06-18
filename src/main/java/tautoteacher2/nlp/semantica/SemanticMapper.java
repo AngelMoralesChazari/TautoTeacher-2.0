@@ -3,6 +3,7 @@ package tautoteacher2.nlp.semantica;
 import java.util.List;
 import tautoteacher2.logicscript.ir.AndExpr;
 import tautoteacher2.logicscript.ir.AtomExpr;
+import tautoteacher2.logicscript.ir.EquivExpr;
 import tautoteacher2.logicscript.ir.ImpExpr;
 import tautoteacher2.logicscript.ir.LogicExpr;
 import tautoteacher2.logicscript.ir.OrExpr;
@@ -72,6 +73,7 @@ public class SemanticMapper {
             case IMP -> new ImpExpr(a, b);
             case AND -> new AndExpr(a, b);
             case OR -> new OrExpr(a, b);
+            case EQUIV -> new EquivExpr(a, b);
         };
     }
 
@@ -90,6 +92,22 @@ public class SemanticMapper {
                         1,
                         2),
                 new PatronSemanticoLgs(
+                        "SIEMPRE_QUE_ENTONCES",
+                        List.of(
+                                TipoTokenNatural.SIEMPRE_QUE,
+                                TipoTokenNatural.LITERAL,
+                                TipoTokenNatural.ENTONCES,
+                                TipoTokenNatural.LITERAL),
+                        TipoSalidaIrPatron.IMP,
+                        1,
+                        3),
+                new PatronSemanticoLgs(
+                        "SIEMPRE_QUE_ELIPTICO",
+                        List.of(TipoTokenNatural.SIEMPRE_QUE, TipoTokenNatural.LITERAL, TipoTokenNatural.LITERAL),
+                        TipoSalidaIrPatron.IMP,
+                        1,
+                        2),
+                new PatronSemanticoLgs(
                         "CONSECUENTE_SI_ANTECEDENTE",
                         List.of(TipoTokenNatural.LITERAL, TipoTokenNatural.SI, TipoTokenNatural.LITERAL),
                         TipoSalidaIrPatron.IMP,
@@ -100,6 +118,12 @@ public class SemanticMapper {
                         List.of(TipoTokenNatural.EN_CASO_DE_QUE, TipoTokenNatural.LITERAL, TipoTokenNatural.LITERAL),
                         TipoSalidaIrPatron.IMP,
                         1,
+                        2),
+                new PatronSemanticoLgs(
+                        "EQUIVALENCIA",
+                        List.of(TipoTokenNatural.LITERAL, TipoTokenNatural.SI_Y_SOLO_SI, TipoTokenNatural.LITERAL),
+                        TipoSalidaIrPatron.EQUIV,
+                        0,
                         2),
                 new PatronSemanticoLgs(
                         "CONJUNCION",
