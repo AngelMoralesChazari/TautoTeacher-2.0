@@ -1,5 +1,4 @@
 # LogicScript — datos léxicos y patrones v0.2
-# Formato: lemma, pattern (véase docs/LogicScript/FormatoLGS.md y Pattern.md)
 
 version 0.2
 
@@ -13,21 +12,85 @@ lemma lloveria -> llover
 # Llevar (paraguas, etc.)
 lemma llevo -> llevar
 lemma lleva -> llevar
+lemma llevas -> llevar
+lemma llevan -> llevar
 lemma llevara -> llevar
 lemma llevaria -> llevar
 lemma llevare -> llevar
 
-# Estudio / aprobar
+# Estudiar
 lemma estudio -> estudiar
+lemma estudias -> estudiar
+lemma estudia -> estudiar
+lemma estudian -> estudiar
 lemma estudie -> estudiar
+lemma estudiare -> estudiar
+lemma estudiaria -> estudiar
+lemma estudiaba -> estudiar
+
+# Aprobar
 lemma apruebo -> aprobar
+lemma apruebas -> aprobar
 lemma aprueba -> aprobar
+lemma aprueban -> aprobar
 lemma apruebe -> aprobar
+lemma aprobo -> aprobar
+lemma aprobara -> aprobar
+lemma aprobare -> aprobar
+
+# Fallar
+lemma fallo -> fallar
+lemma fallas -> fallar
+lemma falla -> fallar
+lemma fallan -> fallar
+lemma fallare -> fallar
+
+# Trabajar / descansar
+lemma trabajo -> trabajar
+lemma trabajas -> trabajar
+lemma trabaja -> trabajar
+lemma trabajan -> trabajar
+lemma descanso -> descansar
+lemma descansas -> descansar
+lemma descansa -> descansar
+lemma descansan -> descansar
+
+# Salir
+lemma salgo -> salir
+lemma sales -> salir
+lemma sale -> salir
+lemma salen -> salir
+lemma saldre -> salir
+
+# Clima / vestimenta
+lemma solea -> hacer_sol
+lemma hace -> hacer
+lemma uso -> usar
+lemma usas -> usar
+lemma usa -> usar
+lemma gorra -> gorra
+lemma sombrero -> sombrero
+lemma paraguas -> paraguas
+
+# Practicar
+lemma practico -> practicar
+lemma practicas -> practicar
+lemma practica -> practicar
+lemma practican -> practicar
+
+# Dormir
+lemma duermo -> dormir
+lemma duermes -> dormir
+lemma duerme -> dormir
+lemma duermen -> dormir
 
 # Patrones semánticos (orden = prioridad de coincidencia)
 pattern SI_ENTONCES si literal entonces literal => imp left=1 right=3
 pattern SI_ELIPTICO si literal literal => imp left=1 right=2
+pattern SIEMPRE_QUE_ENTONCES siempre_que literal entonces literal => imp left=1 right=3
+pattern SIEMPRE_QUE_ELIPTICO siempre_que literal literal => imp left=1 right=2
 pattern CONSECUENTE_SI_ANTECEDENTE literal si literal => imp left=2 right=0
 pattern EN_CASO_DE_QUE en_caso_de_que literal literal => imp left=1 right=2
+pattern EQUIVALENCIA literal si_y_solo_si literal => equiv left=0 right=2
 pattern CONJUNCION literal y literal => and left=0 right=2
 pattern DISYUNCION literal o literal => or left=0 right=2
