@@ -164,8 +164,8 @@ public class VentanaPrincipal extends JFrame {
 
         String[] instrucciones = {
             "Pestaña «Fórmula lógica»: símbolos ∧ ∨ ¬ → ↔ y paréntesis; ejemplos: \"p → q\", \"¬(p ∧ ¬q)\".",
-            "Pestaña «Lenguaje natural»: escriba en español; LogicScript traduce el enunciado a fórmula.",
-            "«Resultado»: solo el dictamen (TAUTOLOGÍA, CONTRADICCIÓN o CONTINGENCIA).",
+            "Pestaña «Lenguaje natural»: escriba su enunciado en español.",
+            "«Resultado»: explicación breve y dictamen (TAUTOLOGÍA, CONTRADICCIÓN o CONTINGENCIA).",
             "Tarjeta «Explicación»: fórmula, mapa de proposiciones, clasificación detallada y pasos de traducción."
         };
         for (String instruccion : instrucciones) {
