@@ -37,39 +37,22 @@ public class TautoTeacherApp {
             return;
         }
 
-        ventana.limpiarContenidoEducativo();
-
         String formula = normalizarSimbolosTeclado(panelEntrada.getTextoFormula().trim());
         if (formula.isEmpty()) {
             panelResultado.limpiarIcono();
             panelResultado.setResultado("Por favor ingrese una expresión lógica para verificar.", COLOR_ERROR);
+            ventana.limpiarContenidoEducativo();
             return;
         }
 
         try {
-            boolean esTautologia = MotorLogico.esTautologia(formula);
             String tipo = MotorLogico.tipoFormula(formula);
-
-            if (esTautologia) {
-                panelResultado.setEstado(true);
-                panelResultado.setResultado(
-                        "Fórmula: " + formula + "\n\n"
-                                + "Clasificación: " + tipo + ".\n"
-                                + "La expresión es siempre verdadera bajo todas las interpretaciones posibles.",
-                        COLOR_AFIRMACION
-                );
-            } else {
-                panelResultado.setEstado(false);
-                panelResultado.setResultado(
-                        "Fórmula: " + formula + "\n\n"
-                                + "Clasificación: " + tipo + ".\n"
-                                + "Existen interpretaciones donde la expresión es falsa.",
-                        COLOR_TEXTO
-                );
-            }
+            mostrarDictamen(tipo);
+            ventana.setContenidoEducativo(formatearExplicacionFormula(formula, tipo));
         } catch (Exception ex) {
             panelResultado.limpiarIcono();
             panelResultado.setResultado("Error al analizar la expresión: " + ex.getMessage(), COLOR_ERROR);
+            ventana.limpiarContenidoEducativo();
         }
     }
 
@@ -91,22 +74,17 @@ public class TautoTeacherApp {
                                 + traduccion.getMensaje(),
                         COLOR_ERROR
                 );
-                ventana.setContenidoEducativo(formatearPasosEducativos(traduccion, enunciado));
+                ventana.setContenidoEducativo(formatearExplicacionError(traduccion, enunciado));
                 return;
             }
 
-            ventana.setContenidoEducativo(formatearPasosEducativos(traduccion, enunciado));
-
             String formula = traduccion.getFormula();
-            boolean esTautologia = MotorLogico.esTautologia(formula);
             String tipo = MotorLogico.tipoFormula(formula);
             boolean traduccionDudosa = usoFallback(traduccion.getPasosDeAnalisis());
 
-            panelResultado.setEstado(esTautologia);
-            panelResultado.setResultado(
-                    construirResumenLenguajeNatural(traduccion, esTautologia, tipo, traduccionDudosa),
-                    colorResumen(esTautologia, traduccionDudosa)
-            );
+            mostrarDictamen(tipo);
+            ventana.setContenidoEducativo(
+                    formatearExplicacionLenguajeNatural(traduccion, enunciado, tipo, traduccionDudosa));
         } catch (Exception ex) {
             panelResultado.limpiarIcono();
             panelResultado.setResultado("Error al analizar el enunciado: " + ex.getMessage(), COLOR_ERROR);
@@ -114,31 +92,94 @@ public class TautoTeacherApp {
         }
     }
 
-    private static String construirResumenLenguajeNatural(
+    private void mostrarDictamen(String tipo) {
+        panelResultado.setDictamen(tipo);
+        panelResultado.setResultado(tipo, colorDictamen(tipo));
+    }
+
+    private static Color colorDictamen(String tipo) {
+        if (tipo == null) {
+            return COLOR_TEXTO;
+        }
+        return switch (tipo.toUpperCase()) {
+            case "TAUTOLOGÍA" -> COLOR_AFIRMACION;
+            case "CONTRADICCIÓN" -> COLOR_ERROR;
+            default -> COLOR_TEXTO;
+        };
+    }
+
+    private static String formatearExplicacionFormula(String formula, String tipo) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Fórmula ingresada\n");
+        sb.append("─────────────────\n\n");
+        sb.append(formula).append("\n\n");
+        sb.append("Verificación lógica\n");
+        sb.append("─────────────────\n\n");
+        sb.append("Clasificación: ").append(tipo).append("\n\n");
+        sb.append(descripcionClasificacion(tipo));
+        return sb.toString();
+    }
+
+    private static String formatearExplicacionLenguajeNatural(
             LogicScriptResult traduccion,
-            boolean esTautologia,
+            String enunciadoOriginal,
             String tipo,
             boolean traduccionDudosa
     ) {
         StringBuilder sb = new StringBuilder();
+        sb.append("Enunciado\n");
+        sb.append("─────────\n\n");
+        sb.append(enunciadoOriginal).append("\n\n");
+
         sb.append("Traducción LogicScript\n");
-        sb.append("─────────────────────\n\n");
+        sb.append("──────────────────────\n\n");
         sb.append("Fórmula: ").append(traduccion.getFormula()).append("\n\n");
         sb.append(formatearMapaProposiciones(traduccion.getProposiciones()));
-        sb.append("\nVerificación lógica\n");
-        sb.append("─────────────────────\n\n");
-        sb.append("Clasificación: ").append(tipo).append("\n");
-        if (esTautologia) {
-            sb.append("Es tautología: la fórmula es verdadera en todas las interpretaciones.\n");
-        } else {
-            sb.append("No es tautología: hay interpretaciones donde la fórmula es falsa.\n");
-        }
+
+        sb.append("Verificación lógica\n");
+        sb.append("─────────────────\n\n");
+        sb.append("Clasificación: ").append(tipo).append("\n\n");
+        sb.append(descripcionClasificacion(tipo));
+
         if (traduccionDudosa) {
-            sb.append("\nAdvertencia: se usó un fallback (átomo simple). ");
+            sb.append("\nAdvertencia\n");
+            sb.append("───────────\n\n");
+            sb.append("Se usó un fallback (átomo simple). ");
             sb.append("La estructura del enunciado puede no haberse capturado por completo.\n");
         }
-        sb.append("\nVea la tarjeta «Explicación» para el detalle de lexemas y patrones.");
+
+        sb.append("\nPasos de análisis\n");
+        sb.append("─────────────────\n\n");
+        sb.append(formatearListaPasos(traduccion.getPasosDeAnalisis()));
         return sb.toString();
+    }
+
+    private static String formatearExplicacionError(LogicScriptResult traduccion, String enunciadoOriginal) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Enunciado\n");
+        sb.append("─────────\n\n");
+        sb.append(enunciadoOriginal).append("\n\n");
+        sb.append("Error de traducción\n");
+        sb.append("───────────────────\n\n");
+        sb.append(traduccion.getMensaje()).append("\n\n");
+        sb.append("Pasos de análisis\n");
+        sb.append("─────────────────\n\n");
+        sb.append(formatearListaPasos(traduccion.getPasosDeAnalisis()));
+        return sb.toString();
+    }
+
+    private static String descripcionClasificacion(String tipo) {
+        if (tipo == null) {
+            return "";
+        }
+        return switch (tipo.toUpperCase()) {
+            case "TAUTOLOGÍA" ->
+                    "La fórmula es verdadera en todas las interpretaciones posibles de sus variables.";
+            case "CONTRADICCIÓN" ->
+                    "La fórmula es falsa en todas las interpretaciones posibles de sus variables.";
+            default ->
+                    "La fórmula es verdadera en algunas interpretaciones y falsa en otras.";
+        };
     }
 
     private static String formatearMapaProposiciones(Map<String, String> proposiciones) {
@@ -152,24 +193,13 @@ public class TautoTeacherApp {
         return sb.append("\n").toString();
     }
 
-    private static String formatearPasosEducativos(LogicScriptResult traduccion, String enunciadoOriginal) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Enunciado: ").append(enunciadoOriginal).append("\n\n");
-        if (traduccion.isExito()) {
-            sb.append("Fórmula emitida: ").append(traduccion.getFormula()).append("\n\n");
-            sb.append(formatearMapaProposiciones(traduccion.getProposiciones()));
-        } else {
-            sb.append("Estado: error de traducción\n");
-            sb.append("Mensaje: ").append(traduccion.getMensaje()).append("\n\n");
-        }
-        sb.append("Pasos de análisis:\n");
-        List<String> pasos = traduccion.getPasosDeAnalisis();
+    private static String formatearListaPasos(List<String> pasos) {
         if (pasos == null || pasos.isEmpty()) {
-            sb.append("  (sin pasos registrados)\n");
-        } else {
-            for (String paso : pasos) {
-                sb.append("  • ").append(paso).append("\n");
-            }
+            return "  (sin pasos registrados)\n";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (String paso : pasos) {
+            sb.append("  • ").append(paso).append("\n");
         }
         return sb.toString();
     }
@@ -184,13 +214,6 @@ public class TautoTeacherApp {
             }
         }
         return false;
-    }
-
-    private static Color colorResumen(boolean esTautologia, boolean traduccionDudosa) {
-        if (traduccionDudosa) {
-            return COLOR_ADVERTENCIA;
-        }
-        return esTautologia ? COLOR_AFIRMACION : COLOR_TEXTO;
     }
 
     private static String normalizarSimbolosTeclado(String f) {
