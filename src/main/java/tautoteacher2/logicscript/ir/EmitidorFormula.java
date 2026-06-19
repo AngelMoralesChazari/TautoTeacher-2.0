@@ -34,6 +34,10 @@ public final class EmitidorFormula {
             return "(" + emitirInterno(i.antecedente(), registro, pasosDeAnalisis)
                     + " → " + emitirInterno(i.consecuente(), registro, pasosDeAnalisis) + ")";
         }
+        if (expr instanceof EquivExpr e) {
+            return "(" + emitirInterno(e.izquierda(), registro, pasosDeAnalisis)
+                    + " ↔ " + emitirInterno(e.derecha(), registro, pasosDeAnalisis) + ")";
+        }
         throw new IllegalStateException("Tipo IR no contemplado: " + expr.getClass());
     }
 
