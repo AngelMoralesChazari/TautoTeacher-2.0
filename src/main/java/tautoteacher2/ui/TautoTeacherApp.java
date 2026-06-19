@@ -3,6 +3,7 @@ package tautoteacher2.ui;
 import java.awt.Color;
 import java.util.List;
 import java.util.Map;
+import tautoteacher2.core.logica.ExplicacionEducativaBuilder;
 import tautoteacher2.core.logica.MotorLogico;
 import tautoteacher2.logicscript.LogicScriptResult;
 import tautoteacher2.logicscript.LogicScriptService;
@@ -48,7 +49,11 @@ public class TautoTeacherApp {
         try {
             String tipo = MotorLogico.tipoFormula(formula);
             mostrarDictamen(tipo);
-            ventana.setContenidoEducativo(formatearExplicacionFormula(formula, tipo));
+            ventana.setContenidoEducativo(ExplicacionEducativaBuilder.construir(
+                    formatearSeccionTecnicaFormula(formula, tipo),
+                    formula,
+                    tipo,
+                    Map.of()));
         } catch (Exception ex) {
             panelResultado.limpiarIcono();
             panelResultado.setResultado("Error al analizar la expresión: " + ex.getMessage(), COLOR_ERROR);
@@ -83,8 +88,11 @@ public class TautoTeacherApp {
             boolean traduccionDudosa = usoFallback(traduccion.getPasosDeAnalisis());
 
             mostrarDictamen(tipo);
-            ventana.setContenidoEducativo(
-                    formatearExplicacionLenguajeNatural(traduccion, enunciado, tipo, traduccionDudosa));
+            ventana.setContenidoEducativo(ExplicacionEducativaBuilder.construir(
+                    formatearSeccionTecnicaLenguajeNatural(traduccion, enunciado, tipo, traduccionDudosa),
+                    formula,
+                    tipo,
+                    traduccion.getProposiciones()));
         } catch (Exception ex) {
             panelResultado.limpiarIcono();
             panelResultado.setResultado("Error al analizar el enunciado: " + ex.getMessage(), COLOR_ERROR);
@@ -117,7 +125,7 @@ public class TautoTeacherApp {
         };
     }
 
-    private static String formatearExplicacionFormula(String formula, String tipo) {
+    private static String formatearSeccionTecnicaFormula(String formula, String tipo) {
         StringBuilder sb = new StringBuilder();
         sb.append("Fórmula ingresada\n");
         sb.append("─────────────────\n\n");
@@ -129,7 +137,7 @@ public class TautoTeacherApp {
         return sb.toString();
     }
 
-    private static String formatearExplicacionLenguajeNatural(
+    private static String formatearSeccionTecnicaLenguajeNatural(
             LogicScriptResult traduccion,
             String enunciadoOriginal,
             String tipo,
