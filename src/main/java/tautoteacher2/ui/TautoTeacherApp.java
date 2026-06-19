@@ -102,7 +102,7 @@ public class TautoTeacherApp {
             return "";
         }
         return descripcionClasificacion(tipo)
-                + "\n\nTras el análisis, se clasifica como:\n\n"
+                + "\n\nPor lo tanto, se clasifica como:\n\n"
                 + tipo.toUpperCase();
     }
 

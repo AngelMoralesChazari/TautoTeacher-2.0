@@ -163,10 +163,10 @@ public class VentanaPrincipal extends JFrame {
         panelInstrucciones.setOpaque(false);
 
         String[] instrucciones = {
-            "Pestaña «Fórmula lógica»: símbolos ∧ ∨ ¬ → ↔ y paréntesis; ejemplos: \"p → q\", \"¬(p ∧ ¬q)\".",
-            "Pestaña «Lenguaje natural»: escriba su enunciado en español.",
-            "«Resultado»: explicación breve y dictamen (TAUTOLOGÍA, CONTRADICCIÓN o CONTINGENCIA).",
-            "Tarjeta «Explicación»: fórmula, mapa de proposiciones, clasificación detallada y pasos de traducción."
+            "Fórmula lógica: símbolos ∧ ∨ ¬ → ↔ y paréntesis; ejemplos: \"p → q\", \"¬(p ∧ ¬q)\".",
+            "Lenguaje natural: escriba su enunciado en español.",
+            "Resultado: explicación breve.",
+            "Explicación: clasificación detallada y pasos de traducción."
         };
         for (String instruccion : instrucciones) {
             JLabel etiqueta = new JLabel("• " + instruccion);

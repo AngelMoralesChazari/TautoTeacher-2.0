@@ -105,9 +105,7 @@ public class PanelEntradaNatural extends JPanel {
         raiz.setBorder(BorderFactory.createEmptyBorder(4, 0, 0, 0));
 
         JLabel ayuda = new JLabel("<html><body style='width:680px'>"
-                + "Escriba en español (p. ej. <i>si estudio apruebo</i>). "
-                + "El análisis breve y el dictamen aparecen en «Resultado»; el detalle completo en «Explicación»."
-                + "</body></html>");
+                + "Escriba su enunciado (p. ej. <i>si estudio apruebo</i>).");
         ayuda.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         ayuda.setForeground(new Color(80, 80, 80));
         ayuda.setAlignmentX(Component.LEFT_ALIGNMENT);
