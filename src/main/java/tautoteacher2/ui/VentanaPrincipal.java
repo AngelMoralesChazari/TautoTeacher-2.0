@@ -10,6 +10,7 @@ public class VentanaPrincipal extends JFrame {
     private final PanelEntradaNatural panelEntrada;
     private final PanelResultadoLogico panelResultado;
     private final PanelVisualizacion panelVisualizacion;
+    private JTextArea areaExplicacionEducativa;
     private final CardLayout layoutSecciones;
     private final JPanel contenedorSecciones;
 
@@ -55,6 +56,16 @@ public class VentanaPrincipal extends JFrame {
 
     public PanelVisualizacion getPanelVisualizacion() {
         return panelVisualizacion;
+    }
+
+    /** Actualiza el panel «Explicación» (pasos de traducción LogicScript). */
+    public void setContenidoEducativo(String texto) {
+        areaExplicacionEducativa.setText(texto != null ? texto : "");
+        areaExplicacionEducativa.setCaretPosition(0);
+    }
+
+    public void limpiarContenidoEducativo() {
+        setContenidoEducativo("Procese un enunciado en lenguaje natural para ver los pasos de traducción.");
     }
 
     private JPanel construirEncabezadoYTarjetas(Color colorPrimario) {
@@ -153,8 +164,8 @@ public class VentanaPrincipal extends JFrame {
 
         String[] instrucciones = {
             "Pestaña «Fórmula lógica»: símbolos ∧ ∨ ¬ → ↔ y paréntesis; ejemplos: \"p → q\", \"¬(p ∧ ¬q)\".",
-            "Pestaña «Lenguaje natural»: escriba el enunciado en español (la traducción a fórmula se conectará al motor más adelante).",
-            "Sección «Explicación» (tarjeta superior): explicación paso a paso cuando esté conectada al motor."
+            "Pestaña «Lenguaje natural»: escriba en español; LogicScript traduce a fórmula y muestra el mapa de proposiciones.",
+            "Tarjeta «Explicación»: pasos detallados de la traducción (lexemas, patrón detectado, composición de bloques)."
         };
         for (String instruccion : instrucciones) {
             JLabel etiqueta = new JLabel("• " + instruccion);
@@ -185,13 +196,20 @@ public class VentanaPrincipal extends JFrame {
     private JPanel construirPanelEducativo() {
         JPanel panelEducativo = new JPanel(new BorderLayout());
         panelEducativo.setOpaque(false);
-        JTextArea areaEducativa = new JTextArea();
-        areaEducativa.setEditable(false);
-        areaEducativa.setLineWrap(true);
-        areaEducativa.setWrapStyleWord(true);
-        areaEducativa.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 16));
-        areaEducativa.setText("Aquí se mostrará la explicación educativa.");
-        panelEducativo.add(new JScrollPane(areaEducativa), BorderLayout.CENTER);
+        panelEducativo.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
+
+        areaExplicacionEducativa = new JTextArea();
+        areaExplicacionEducativa.setEditable(false);
+        areaExplicacionEducativa.setLineWrap(true);
+        areaExplicacionEducativa.setWrapStyleWord(true);
+        areaExplicacionEducativa.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 15));
+        areaExplicacionEducativa.setText(
+                "Procese un enunciado en lenguaje natural para ver los pasos de traducción.");
+
+        JScrollPane scroll = new JScrollPane(areaExplicacionEducativa);
+        scroll.setBorder(BorderFactory.createTitledBorder("Pasos de traducción LogicScript"));
+
+        panelEducativo.add(scroll, BorderLayout.CENTER);
         return panelEducativo;
     }
 }
