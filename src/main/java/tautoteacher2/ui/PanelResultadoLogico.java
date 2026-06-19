@@ -63,4 +63,26 @@ public class PanelResultadoLogico extends JPanel {
             etiquetaIcono.setForeground(new Color(220, 53, 69));
         }
     }
+
+    /** Icono y color según clasificación del motor lógico. */
+    public void setDictamen(String tipo) {
+        if (tipo == null) {
+            limpiarIcono();
+            return;
+        }
+        switch (tipo.toUpperCase()) {
+            case "TAUTOLOGÍA" -> {
+                etiquetaIcono.setText("✔");
+                etiquetaIcono.setForeground(new Color(40, 167, 69));
+            }
+            case "CONTRADICCIÓN" -> {
+                etiquetaIcono.setText("✘");
+                etiquetaIcono.setForeground(new Color(220, 53, 69));
+            }
+            default -> {
+                etiquetaIcono.setText("○");
+                etiquetaIcono.setForeground(new Color(200, 120, 0));
+            }
+        }
+    }
 }
