@@ -98,7 +98,7 @@ public class VentanaPrincipal extends JFrame {
         tarjetas.setOpaque(false);
         tarjetas.add(crearTarjeta("Análisis Rápido", "Verifica expresiones lógicas en tiempo real", "analisis"));
         tarjetas.add(crearTarjeta("Visualización Clara", "Resultados presentados de forma intuitiva", "visualizacion"));
-        tarjetas.add(crearTarjeta("Explicación", "Paso a paso (como en TautoTeacher original)", "educativo"));
+        tarjetas.add(crearTarjeta("Explicación", "Traducción, demostración y tabla de verdad", "educativo"));
 
         JPanel norte = new JPanel();
         norte.setLayout(new BoxLayout(norte, BoxLayout.Y_AXIS));
@@ -166,7 +166,7 @@ public class VentanaPrincipal extends JFrame {
             "Fórmula lógica: símbolos ∧ ∨ ¬ → ↔ y paréntesis; ejemplos: \"p → q\", \"¬(p ∧ ¬q)\".",
             "Lenguaje natural: escriba su enunciado en español.",
             "Resultado: explicación breve.",
-            "Explicación: clasificación detallada y pasos de traducción."
+            "Explicación: traducción, demostración educativa y tabla de verdad."
         };
         for (String instruccion : instrucciones) {
             JLabel etiqueta = new JLabel("• " + instruccion);
@@ -208,7 +208,7 @@ public class VentanaPrincipal extends JFrame {
                 "Procese un enunciado en lenguaje natural para ver los pasos de traducción.");
 
         JScrollPane scroll = new JScrollPane(areaExplicacionEducativa);
-        scroll.setBorder(BorderFactory.createTitledBorder("Pasos de traducción LogicScript"));
+        scroll.setBorder(BorderFactory.createTitledBorder("Explicación educativa"));
 
         panelEducativo.add(scroll, BorderLayout.CENTER);
         return panelEducativo;
