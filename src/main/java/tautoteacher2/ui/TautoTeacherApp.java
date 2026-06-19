@@ -94,7 +94,16 @@ public class TautoTeacherApp {
 
     private void mostrarDictamen(String tipo) {
         panelResultado.setDictamen(tipo);
-        panelResultado.setResultado(tipo, colorDictamen(tipo));
+        panelResultado.setResultado(formatearDictamenBreve(tipo), colorDictamen(tipo));
+    }
+
+    private static String formatearDictamenBreve(String tipo) {
+        if (tipo == null || tipo.isBlank()) {
+            return "";
+        }
+        return descripcionClasificacion(tipo)
+                + "\n\nTras el análisis, se clasifica como:\n\n"
+                + tipo.toUpperCase();
     }
 
     private static Color colorDictamen(String tipo) {
