@@ -74,9 +74,30 @@ public class BaseConocimiento {
 
         // Estudio / aprobar
         lemas.put("estudio", "estudiar");
+        lemas.put("estudias", "estudiar");
+        lemas.put("estudia", "estudiar");
+        lemas.put("estudian", "estudiar");
         lemas.put("estudie", "estudiar");
+        lemas.put("estudiare", "estudiar");
         lemas.put("apruebo", "aprobar");
+        lemas.put("apruebas", "aprobar");
         lemas.put("aprueba", "aprobar");
+        lemas.put("aprueban", "aprobar");
         lemas.put("apruebe", "aprobar");
+
+        // Trabajar / descansar
+        lemas.put("trabajo", "trabajar");
+        lemas.put("trabaja", "trabajar");
+        lemas.put("descanso", "descansar");
+        lemas.put("descansa", "descansar");
+
+        // Practicar
+        lemas.put("practico", "practicar");
+        lemas.put("practica", "practicar");
+
+        // Clima
+        lemas.put("solea", "hacer_sol");
+        lemas.put("hace", "hacer");
+        lemas.put("uso", "usar");
     }
 }
