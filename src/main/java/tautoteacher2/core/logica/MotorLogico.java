@@ -319,6 +319,64 @@ public class MotorLogico {
         return sb.toString();
     }
 
+    /**
+     * Tabla de verdad para fórmulas con hasta 4 variables proposicionales.
+     * Devuelve cadena vacía si no aplica.
+     */
+    public static String generarTablaVerdad(String formula) {
+        try {
+            validarSintaxis(formula);
+        } catch (IllegalArgumentException e) {
+            return "";
+        }
+
+        String expr = formula.replace("∧", "&&")
+                .replace("∨", "||")
+                .replace("¬", "!")
+                .replace("→", "->")
+                .replace("↔", "<->");
+
+        Set<String> variables = extraerVariables(expr);
+        if (variables.isEmpty()) {
+            return "";
+        }
+        if (variables.size() > 4) {
+            return "TABLA DE VERDAD\n─────────────\n\n"
+                    + "(No se muestra: la fórmula tiene más de 4 variables.)\n";
+        }
+
+        String vars[] = variables.toArray(new String[0]);
+        int n = vars.length;
+        int total = 1 << n;
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("TABLA DE VERDAD\n");
+        sb.append("─────────────\n\n");
+
+        for (String v : vars) {
+            sb.append(v).append("\t");
+        }
+        sb.append("| ").append(formula).append("\n");
+
+        for (int i = 0; i < total; i++) {
+            Map<String, Boolean> valores = new HashMap<>();
+            for (int j = 0; j < n; j++) {
+                valores.put(vars[j], (i & (1 << j)) != 0);
+            }
+            for (String v : vars) {
+                sb.append(valores.get(v) ? "V" : "F").append("\t");
+            }
+            String evaluable = expr;
+            for (String v : vars) {
+                evaluable = evaluable.replaceAll(
+                        "(?<![a-zA-Z0-9_])" + Pattern.quote(v) + "(?![a-zA-Z0-9_])",
+                        valores.get(v).toString());
+            }
+            sb.append("| ").append(evaluaExpresion(evaluable) ? "V" : "F").append("\n");
+        }
+        return sb.toString();
+    }
+
     private static void validarSintaxis(String formula) {
         int balance = 0;
         for (char c : formula.toCharArray()) {
