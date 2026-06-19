@@ -9,5 +9,7 @@ public enum TipoSalidaIrPatron {
     /** Conjunción ({@code AndExpr}). */
     AND,
     /** Disyunción ({@code OrExpr}). */
-    OR
+    OR,
+    /** Equivalencia ({@code EquivExpr}). */
+    EQUIV
 }

@@ -197,9 +197,10 @@ public final class LgsCargador {
         String t = token.trim().toLowerCase(Locale.ROOT);
         return switch (t) {
             case "imp", "implica", "implies" -> TipoSalidaIrPatron.IMP;
-            case "and", "y" -> TipoSalidaIrPatron.AND;
-            case "or", "o" -> TipoSalidaIrPatron.OR;
-            default -> throw new IOException("Línea " + numLinea + ": tipo IR desconocido (use imp, and, or): " + token);
+            case "and" -> TipoSalidaIrPatron.AND;
+            case "or" -> TipoSalidaIrPatron.OR;
+            case "equiv", "equivalente", "iff", "bicondicional" -> TipoSalidaIrPatron.EQUIV;
+            default -> throw new IOException("Línea " + numLinea + ": tipo IR desconocido (use imp, and, or, equiv): " + token);
         };
     }
 
@@ -209,6 +210,8 @@ public final class LgsCargador {
             case "si" -> TipoTokenNatural.SI;
             case "entonces" -> TipoTokenNatural.ENTONCES;
             case "en_caso_de_que" -> TipoTokenNatural.EN_CASO_DE_QUE;
+            case "si_y_solo_si" -> TipoTokenNatural.SI_Y_SOLO_SI;
+            case "siempre_que" -> TipoTokenNatural.SIEMPRE_QUE;
             case "y" -> TipoTokenNatural.Y;
             case "o" -> TipoTokenNatural.O;
             case "literal" -> TipoTokenNatural.LITERAL;
