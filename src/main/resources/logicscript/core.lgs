@@ -85,6 +85,8 @@ lemma duerme -> dormir
 lemma duermen -> dormir
 
 # Patrones semánticos (orden = prioridad de coincidencia)
+pattern SI_CONJ_Y_ENTONCES si literal y literal entonces literal => imp_and left=1 mid=3 right=5
+pattern SI_ENTONCES_DISY_CONS si literal entonces literal o literal => imp_or left=1 mid=3 right=5
 pattern SI_ENTONCES si literal entonces literal => imp left=1 right=3
 pattern SI_ELIPTICO si literal literal => imp left=1 right=2
 pattern SIEMPRE_QUE_ENTONCES siempre_que literal entonces literal => imp left=1 right=3
