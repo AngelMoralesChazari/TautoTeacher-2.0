@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import tautoteacher2.core.logica.ExplicacionEducativaBuilder;
 import tautoteacher2.core.logica.MotorLogico;
+import tautoteacher2.core.logica.TablaVerdad;
 import tautoteacher2.logicscript.LogicScriptResult;
 import tautoteacher2.logicscript.LogicScriptService;
 
@@ -18,6 +19,7 @@ public class TautoTeacherApp {
     private VentanaPrincipal ventana;
     private PanelEntradaNatural panelEntrada;
     private PanelResultadoLogico panelResultado;
+    private PanelVisualizacion panelVisualizacion;
     private final LogicScriptService logicScriptService = new LogicScriptService();
 
     public void iniciar() {
@@ -25,6 +27,7 @@ public class TautoTeacherApp {
 
         panelEntrada = ventana.getPanelEntradaNatural();
         panelResultado = ventana.getPanelResultadoLogico();
+        panelVisualizacion = ventana.getPanelVisualizacion();
 
         panelEntrada.setProcesarListener(e -> procesarEntrada());
 
@@ -43,6 +46,7 @@ public class TautoTeacherApp {
             panelResultado.limpiarIcono();
             panelResultado.setResultado("Por favor ingrese una expresión lógica para verificar.", COLOR_ERROR);
             ventana.limpiarContenidoEducativo();
+            panelVisualizacion.limpiar();
             return;
         }
 
@@ -54,10 +58,12 @@ public class TautoTeacherApp {
                     formula,
                     tipo,
                     Map.of()));
+            actualizarVisualizacion(formula, Map.of());
         } catch (Exception ex) {
             panelResultado.limpiarIcono();
             panelResultado.setResultado("Error al analizar la expresión: " + ex.getMessage(), COLOR_ERROR);
             ventana.limpiarContenidoEducativo();
+            panelVisualizacion.limpiar();
         }
     }
 
@@ -67,6 +73,7 @@ public class TautoTeacherApp {
             panelResultado.limpiarIcono();
             panelResultado.setResultado("Por favor ingrese un enunciado.", COLOR_ERROR);
             ventana.limpiarContenidoEducativo();
+            panelVisualizacion.limpiar();
             return;
         }
 
@@ -80,6 +87,7 @@ public class TautoTeacherApp {
                         COLOR_ERROR
                 );
                 ventana.setContenidoEducativo(formatearExplicacionError(traduccion, enunciado));
+                panelVisualizacion.limpiar();
                 return;
             }
 
@@ -93,11 +101,17 @@ public class TautoTeacherApp {
                     formula,
                     tipo,
                     traduccion.getProposiciones()));
+            actualizarVisualizacion(formula, traduccion.getProposiciones());
         } catch (Exception ex) {
             panelResultado.limpiarIcono();
             panelResultado.setResultado("Error al analizar el enunciado: " + ex.getMessage(), COLOR_ERROR);
             ventana.limpiarContenidoEducativo();
+            panelVisualizacion.limpiar();
         }
+    }
+
+    private void actualizarVisualizacion(String formula, Map<String, String> proposiciones) {
+        panelVisualizacion.mostrarTabla(TablaVerdad.construir(formula), proposiciones);
     }
 
     private void mostrarDictamen(String tipo) {

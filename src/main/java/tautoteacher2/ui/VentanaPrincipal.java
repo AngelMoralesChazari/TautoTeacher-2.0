@@ -65,7 +65,8 @@ public class VentanaPrincipal extends JFrame {
     }
 
     public void limpiarContenidoEducativo() {
-        setContenidoEducativo("Procese un enunciado en lenguaje natural para ver los pasos de traducción.");
+        setContenidoEducativo("Procese un enunciado para ver la traducción y la demostración educativa.");
+        panelVisualizacion.limpiar();
     }
 
     private JPanel construirEncabezadoYTarjetas(Color colorPrimario) {
@@ -97,8 +98,8 @@ public class VentanaPrincipal extends JFrame {
         tarjetas.setPreferredSize(new Dimension(0, 120));
         tarjetas.setOpaque(false);
         tarjetas.add(crearTarjeta("Análisis Rápido", "Verifica expresiones lógicas en tiempo real", "analisis"));
-        tarjetas.add(crearTarjeta("Visualización Clara", "Resultados presentados de forma intuitiva", "visualizacion"));
-        tarjetas.add(crearTarjeta("Explicación", "Traducción, demostración y tabla de verdad", "educativo"));
+        tarjetas.add(crearTarjeta("Visualización Clara", "Tabla de verdad con leyendas y colores V/F", "visualizacion"));
+        tarjetas.add(crearTarjeta("Explicación", "Traducción y demostración educativa", "educativo"));
 
         JPanel norte = new JPanel();
         norte.setLayout(new BoxLayout(norte, BoxLayout.Y_AXIS));
@@ -165,8 +166,9 @@ public class VentanaPrincipal extends JFrame {
         String[] instrucciones = {
             "Fórmula lógica: símbolos ∧ ∨ ¬ → ↔ y paréntesis; ejemplos: \"p → q\", \"¬(p ∧ ¬q)\".",
             "Lenguaje natural: escriba su enunciado en español.",
-            "Resultado: explicación breve.",
-            "Explicación: traducción, demostración educativa y tabla de verdad."
+            "Resultado: explicación breve y dictamen.",
+            "Visualización Clara: tabla de verdad con leyendas (p = estudiar) y colores V/F.",
+            "Explicación: traducción, pasos LogicScript y demostración educativa."
         };
         for (String instruccion : instrucciones) {
             JLabel etiqueta = new JLabel("• " + instruccion);
