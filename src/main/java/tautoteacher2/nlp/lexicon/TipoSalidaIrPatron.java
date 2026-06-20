@@ -11,5 +11,9 @@ public enum TipoSalidaIrPatron {
     /** Disyunción ({@code OrExpr}). */
     OR,
     /** Equivalencia ({@code EquivExpr}). */
-    EQUIV
+    EQUIV,
+    /** Implicación con antecedente conjunción: ({@code AndExpr}) → consecuente. */
+    IMP_AND,
+    /** Implicación con consecuente disyunción: antecedente → ({@code OrExpr}). */
+    IMP_OR
 }
