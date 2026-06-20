@@ -65,20 +65,52 @@ public class SemanticMapper {
     }
 
     private LogicExpr construirDesdePatron(PatronSemanticoLgs p, List<TokenNatural> tokens) {
-        String lexIzq = tokens.get(p.indiceIzq()).getLexema();
-        String lexDer = tokens.get(p.indiceDer()).getLexema();
-        AtomExpr a = atomoDesde(lexIzq);
-        AtomExpr b = atomoDesde(lexDer);
+        AtomExpr izq = atomoDesde(tokens.get(p.indiceIzq()).getLexema());
+        AtomExpr der = atomoDesde(tokens.get(p.indiceDer()).getLexema());
         return switch (p.tipoIr()) {
-            case IMP -> new ImpExpr(a, b);
-            case AND -> new AndExpr(a, b);
-            case OR -> new OrExpr(a, b);
-            case EQUIV -> new EquivExpr(a, b);
+            case IMP -> new ImpExpr(izq, der);
+            case AND -> new AndExpr(izq, der);
+            case OR -> new OrExpr(izq, der);
+            case EQUIV -> new EquivExpr(izq, der);
+            case IMP_AND -> {
+                AtomExpr medio = atomoDesde(tokens.get(p.indiceMedio()).getLexema());
+                yield new ImpExpr(new AndExpr(izq, medio), der);
+            }
+            case IMP_OR -> {
+                AtomExpr medio = atomoDesde(tokens.get(p.indiceMedio()).getLexema());
+                yield new ImpExpr(izq, new OrExpr(medio, der));
+            }
         };
     }
 
     private static List<PatronSemanticoLgs> patronesPredeterminados() {
         return List.of(
+                new PatronSemanticoLgs(
+                        "SI_CONJ_Y_ENTONCES",
+                        List.of(
+                                TipoTokenNatural.SI,
+                                TipoTokenNatural.LITERAL,
+                                TipoTokenNatural.Y,
+                                TipoTokenNatural.LITERAL,
+                                TipoTokenNatural.ENTONCES,
+                                TipoTokenNatural.LITERAL),
+                        TipoSalidaIrPatron.IMP_AND,
+                        1,
+                        5,
+                        3),
+                new PatronSemanticoLgs(
+                        "SI_ENTONCES_DISY_CONS",
+                        List.of(
+                                TipoTokenNatural.SI,
+                                TipoTokenNatural.LITERAL,
+                                TipoTokenNatural.ENTONCES,
+                                TipoTokenNatural.LITERAL,
+                                TipoTokenNatural.O,
+                                TipoTokenNatural.LITERAL),
+                        TipoSalidaIrPatron.IMP_OR,
+                        1,
+                        5,
+                        3),
                 new PatronSemanticoLgs(
                         "SI_ENTONCES",
                         List.of(TipoTokenNatural.SI, TipoTokenNatural.LITERAL, TipoTokenNatural.ENTONCES, TipoTokenNatural.LITERAL),
