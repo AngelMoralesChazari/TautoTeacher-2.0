@@ -167,19 +167,25 @@ public final class LgsCargador {
         TipoSalidaIrPatron tipoIr = parsearTipoIr(numLinea, partesSalida[0]);
         int left = -1;
         int right = -1;
+        int mid = -1;
         for (int i = 1; i < partesSalida.length; i++) {
             String p = partesSalida[i].toLowerCase(Locale.ROOT);
             if (p.startsWith("left=")) {
                 left = parsearIndice(numLinea, p.substring(5));
             } else if (p.startsWith("right=")) {
                 right = parsearIndice(numLinea, p.substring(6));
+            } else if (p.startsWith("mid=")) {
+                mid = parsearIndice(numLinea, p.substring(4));
             }
         }
         if (left < 0 || right < 0) {
             throw new IOException("Línea " + numLinea + ": faltan left= e right= en pattern: " + linea);
         }
+        if ((tipoIr == TipoSalidaIrPatron.IMP_AND || tipoIr == TipoSalidaIrPatron.IMP_OR) && mid < 0) {
+            throw new IOException("Línea " + numLinea + ": imp_and/imp_or requieren mid=: " + linea);
+        }
         try {
-            return new PatronSemanticoLgs(nombre, forma, tipoIr, left, right);
+            return new PatronSemanticoLgs(nombre, forma, tipoIr, left, right, mid);
         } catch (IllegalArgumentException ex) {
             throw new IOException("Línea " + numLinea + ": " + ex.getMessage() + " — " + linea, ex);
         }
@@ -200,7 +206,9 @@ public final class LgsCargador {
             case "and" -> TipoSalidaIrPatron.AND;
             case "or" -> TipoSalidaIrPatron.OR;
             case "equiv", "equivalente", "iff", "bicondicional" -> TipoSalidaIrPatron.EQUIV;
-            default -> throw new IOException("Línea " + numLinea + ": tipo IR desconocido (use imp, and, or, equiv): " + token);
+            case "imp_and" -> TipoSalidaIrPatron.IMP_AND;
+            case "imp_or" -> TipoSalidaIrPatron.IMP_OR;
+            default -> throw new IOException("Línea " + numLinea + ": tipo IR desconocido (use imp, and, or, equiv, imp_and, imp_or): " + token);
         };
     }
 
