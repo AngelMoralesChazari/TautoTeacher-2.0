@@ -61,6 +61,16 @@ public final class LogicScriptRegressionHarness {
         casos.add(new Caso("lemmas_practico", "practico si y solo si estudio", true, "(p " + IFF + " q)"));
         casos.add(new Caso("conjuncion_clima", "solea y hace calor", true, "(p " + AND + " q)"));
         casos.add(new Caso(
+                "si_conj_y_entonces",
+                "si estudio y practico entonces apruebo",
+                true,
+                "((" + "p " + AND + " q) " + IMP + " r)"));
+        casos.add(new Caso(
+                "si_entonces_disy_cons",
+                "si llueve entonces llevo paraguas o gorra",
+                true,
+                "(p " + IMP + " (q " + OR + " r))"));
+        casos.add(new Caso(
                 "dos_bloques",
                 "si llueve entonces llevo paraguas, en caso de que estudio, apruebo",
                 true,
