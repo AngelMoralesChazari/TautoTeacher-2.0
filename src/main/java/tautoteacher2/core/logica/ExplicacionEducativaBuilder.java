@@ -40,12 +40,6 @@ public final class ExplicacionEducativaBuilder {
         String demostracion = MotorLogico.generarExplicacionEducativa(formulaParaAnalisis, esTautologia);
         sb.append(aplicarLeyendas(demostracion, simboloALema));
 
-        String tabla = MotorLogico.generarTablaVerdad(formula);
-        if (tabla != null && !tabla.isBlank()) {
-            sb.append("\n\n");
-            sb.append(aplicarLeyendas(tabla, simboloALema));
-        }
-
         return sb.toString();
     }
 
