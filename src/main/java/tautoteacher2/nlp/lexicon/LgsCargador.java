@@ -7,10 +7,12 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import tautoteacher2.nlp.lexer.TipoTokenNatural;
 
@@ -95,6 +97,8 @@ public final class LgsCargador {
     public static ContenidoLgs cargar(InputStream entrada) throws IOException {
         Map<String, String> lemas = new LinkedHashMap<>();
         List<PatronSemanticoLgs> patrones = new ArrayList<>();
+        List<ReglaMorfologicaLgs> reglasMorfologicas = new ArrayList<>();
+        Set<String> exclusionesMorfologicas = new LinkedHashSet<>();
         try (BufferedReader br = new BufferedReader(new InputStreamReader(entrada, StandardCharsets.UTF_8))) {
             String linea;
             int num = 0;
@@ -112,6 +116,10 @@ public final class LgsCargador {
                     parsearLemma(num, t, lemas);
                     continue;
                 }
+                if (tl.startsWith("lexrule ")) {
+                    parsearLexrule(num, t, reglasMorfologicas, exclusionesMorfologicas);
+                    continue;
+                }
                 if (tl.startsWith("pattern ")) {
                     patrones.add(parsearPattern(num, t));
                     continue;
@@ -119,7 +127,9 @@ public final class LgsCargador {
                 throw new IOException("Línea " + num + ": directiva no reconocida: " + linea);
             }
         }
-        return new ContenidoLgs(lemas, patrones);
+        ConfiguracionMorfologiaLgs morfologia =
+                new ConfiguracionMorfologiaLgs(reglasMorfologicas, exclusionesMorfologicas);
+        return new ContenidoLgs(lemas, patrones, morfologia);
     }
 
     public static Map<String, String> cargarLemas(InputStream entrada) throws IOException {
@@ -138,6 +148,90 @@ public final class LgsCargador {
             throw new IOException("Línea " + numLinea + ": forma o lema vacío: " + linea);
         }
         lemas.put(forma, lema);
+    }
+
+    private static void parsearLexrule(
+            int numLinea,
+            String linea,
+            List<ReglaMorfologicaLgs> reglas,
+            Set<String> exclusiones) throws IOException {
+        String resto = linea.substring(8).trim();
+        if (resto.isEmpty()) {
+            throw new IOException("Línea " + numLinea + ": lexrule sin cuerpo: " + linea);
+        }
+        String[] partes = resto.split("\\s+");
+        String tipo = partes[0].toLowerCase(Locale.ROOT);
+        if ("excluir".equals(tipo)) {
+            if (partes.length < 2) {
+                throw new IOException("Línea " + numLinea + ": lexrule excluir requiere al menos una palabra: " + linea);
+            }
+            for (int i = 1; i < partes.length; i++) {
+                String palabra = partes[i].trim().toLowerCase(Locale.ROOT);
+                if (!palabra.isEmpty()) {
+                    exclusiones.add(palabra);
+                }
+            }
+            return;
+        }
+        if (!"sufijo".equals(tipo)) {
+            throw new IOException("Línea " + numLinea + ": lexrule debe empezar por excluir o sufijo: " + linea);
+        }
+        if (partes.length < 3) {
+            throw new IOException("Línea " + numLinea + ": lexrule sufijo incompleta: " + linea);
+        }
+        String sufijo = partes[1].toLowerCase(Locale.ROOT);
+        if ("heuristica".equals(partes[2].toLowerCase(Locale.ROOT))) {
+            if (partes.length < 4 || !"primera_persona".equals(partes[3].toLowerCase(Locale.ROOT))) {
+                throw new IOException(
+                        "Línea " + numLinea + ": use 'lexrule sufijo <s> heuristica primera_persona': " + linea);
+            }
+            try {
+                reglas.add(ReglaMorfologicaLgs.heuristicaPrimeraPersona(sufijo));
+            } catch (IllegalArgumentException ex) {
+                throw new IOException("Línea " + numLinea + ": " + ex.getMessage() + " — " + linea, ex);
+            }
+            return;
+        }
+        if (!"infinitivo".equals(partes[2].toLowerCase(Locale.ROOT))) {
+            throw new IOException("Línea " + numLinea + ": tras sufijo se espera infinitivo o heuristica: " + linea);
+        }
+        if (partes.length < 4) {
+            throw new IOException("Línea " + numLinea + ": falta ar|er|ir tras infinitivo: " + linea);
+        }
+        char vocal = parsearVocalInfinitivo(numLinea, partes[3]);
+        ReglaMorfologicaLgs.Condicion condicion = ReglaMorfologicaLgs.Condicion.NINGUNA;
+        List<String> patronesRaiz = List.of();
+        if (partes.length >= 6 && "si".equals(partes[4].toLowerCase(Locale.ROOT))) {
+            String cond = partes[5].toLowerCase(Locale.ROOT);
+            if ("raiz_vocal".equals(cond)) {
+                condicion = ReglaMorfologicaLgs.Condicion.RAIZ_VOCAL;
+            } else if ("raiz_consonante".equals(cond)) {
+                condicion = ReglaMorfologicaLgs.Condicion.RAIZ_CONSONANTE;
+            } else if ("raiz_termina".equals(cond)) {
+                condicion = ReglaMorfologicaLgs.Condicion.RAIZ_TERMINA;
+                if (partes.length < 7) {
+                    throw new IOException("Línea " + numLinea + ": raiz_termina requiere patrones: " + linea);
+                }
+                patronesRaiz = List.of(java.util.Arrays.copyOfRange(partes, 6, partes.length));
+            } else {
+                throw new IOException("Línea " + numLinea + ": condicion desconocida en lexrule: " + linea);
+            }
+        }
+        try {
+            reglas.add(ReglaMorfologicaLgs.sufijo(sufijo, vocal, condicion, patronesRaiz));
+        } catch (IllegalArgumentException ex) {
+            throw new IOException("Línea " + numLinea + ": " + ex.getMessage() + " — " + linea, ex);
+        }
+    }
+
+    private static char parsearVocalInfinitivo(int numLinea, String token) throws IOException {
+        String t = token.toLowerCase(Locale.ROOT);
+        return switch (t) {
+            case "ar" -> 'a';
+            case "er" -> 'e';
+            case "ir" -> 'i';
+            default -> throw new IOException("Línea " + numLinea + ": infinitivo debe ser ar, er o ir: " + token);
+        };
     }
 
     private static PatronSemanticoLgs parsearPattern(int numLinea, String linea) throws IOException {
