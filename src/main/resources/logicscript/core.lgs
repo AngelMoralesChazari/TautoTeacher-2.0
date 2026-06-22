@@ -1,7 +1,31 @@
-# LogicScript — datos léxicos y patrones v0.5
-# Fase B: patrones semánticos elípticos compuestos (si/cuando/siempre que + y/o sin entonces).
+# LogicScript — datos léxicos y patrones v0.6
+# Fase C: reglas morfológicas declarativas (lexrule) en lugar de solo Java embebido.
 
-version 0.5
+version 0.6
+
+# --- Morfología declarativa (orden = prioridad; primera coincidencia gana) ---
+lexrule excluir gorra sombrero paraguas calor frio sol cielo nube nubes lluvia examen clase
+
+lexrule sufijo iaria infinitivo ar
+lexrule sufijo aria infinitivo ar
+lexrule sufijo iaba infinitivo ar
+lexrule sufijo abas infinitivo ar
+lexrule sufijo aban infinitivo ar
+lexrule sufijo amos infinitivo ar
+lexrule sufijo ais infinitivo ar
+lexrule sufijo aron infinitivo ar
+lexrule sufijo aran infinitivo ar
+lexrule sufijo are infinitivo ar
+lexrule sufijo aba infinitivo ar
+lexrule sufijo ado infinitivo ar
+lexrule sufijo ada infinitivo ar
+lexrule sufijo emos infinitivo er
+lexrule sufijo eis infinitivo er
+lexrule sufijo imos infinitivo ir
+lexrule sufijo an infinitivo ar
+lexrule sufijo as infinitivo ar
+lexrule sufijo a infinitivo ar
+lexrule sufijo o heuristica primera_persona
 
 # Lluvia
 lemma llueve -> llover
