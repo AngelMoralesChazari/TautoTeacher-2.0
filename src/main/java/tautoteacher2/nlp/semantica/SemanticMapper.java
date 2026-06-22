@@ -6,6 +6,7 @@ import tautoteacher2.logicscript.ir.AtomExpr;
 import tautoteacher2.logicscript.ir.EquivExpr;
 import tautoteacher2.logicscript.ir.ImpExpr;
 import tautoteacher2.logicscript.ir.LogicExpr;
+import tautoteacher2.logicscript.ir.NegExpr;
 import tautoteacher2.logicscript.ir.OrExpr;
 import tautoteacher2.nlp.lexer.TipoTokenNatural;
 import tautoteacher2.nlp.lexer.TokenNatural;
@@ -80,6 +81,15 @@ public class SemanticMapper {
                 AtomExpr medio = atomoDesde(tokens.get(p.indiceMedio()).getLexema());
                 yield new ImpExpr(izq, new OrExpr(medio, der));
             }
+            case IMP_OR_ANT -> {
+                AtomExpr medio = atomoDesde(tokens.get(p.indiceMedio()).getLexema());
+                yield new ImpExpr(new OrExpr(izq, medio), der);
+            }
+            case IMP_AND_CONS -> {
+                AtomExpr medio = atomoDesde(tokens.get(p.indiceMedio()).getLexema());
+                yield new ImpExpr(izq, new AndExpr(medio, der));
+            }
+            case IMP_UNLESS -> new ImpExpr(new NegExpr(der), izq);
         };
     }
 
@@ -112,6 +122,44 @@ public class SemanticMapper {
                         5,
                         3),
                 new PatronSemanticoLgs(
+                        "SI_ENTONCES_CONJ_CONS",
+                        List.of(
+                                TipoTokenNatural.SI,
+                                TipoTokenNatural.LITERAL,
+                                TipoTokenNatural.ENTONCES,
+                                TipoTokenNatural.LITERAL,
+                                TipoTokenNatural.Y,
+                                TipoTokenNatural.LITERAL),
+                        TipoSalidaIrPatron.IMP_AND_CONS,
+                        1,
+                        5,
+                        3),
+                new PatronSemanticoLgs(
+                        "SI_DISY_O_ENTONCES",
+                        List.of(
+                                TipoTokenNatural.SI,
+                                TipoTokenNatural.LITERAL,
+                                TipoTokenNatural.O,
+                                TipoTokenNatural.LITERAL,
+                                TipoTokenNatural.ENTONCES,
+                                TipoTokenNatural.LITERAL),
+                        TipoSalidaIrPatron.IMP_OR_ANT,
+                        1,
+                        5,
+                        3),
+                new PatronSemanticoLgs(
+                        "SI_CONJ_Y_ELIPTICO",
+                        List.of(
+                                TipoTokenNatural.SI,
+                                TipoTokenNatural.LITERAL,
+                                TipoTokenNatural.Y,
+                                TipoTokenNatural.LITERAL,
+                                TipoTokenNatural.LITERAL),
+                        TipoSalidaIrPatron.IMP_AND,
+                        1,
+                        4,
+                        3),
+                new PatronSemanticoLgs(
                         "SI_ENTONCES",
                         List.of(TipoTokenNatural.SI, TipoTokenNatural.LITERAL, TipoTokenNatural.ENTONCES, TipoTokenNatural.LITERAL),
                         TipoSalidaIrPatron.IMP,
@@ -122,6 +170,34 @@ public class SemanticMapper {
                         List.of(TipoTokenNatural.SI, TipoTokenNatural.LITERAL, TipoTokenNatural.LITERAL),
                         TipoSalidaIrPatron.IMP,
                         1,
+                        2),
+                new PatronSemanticoLgs(
+                        "CUANDO_ENTONCES",
+                        List.of(
+                                TipoTokenNatural.CUANDO,
+                                TipoTokenNatural.LITERAL,
+                                TipoTokenNatural.ENTONCES,
+                                TipoTokenNatural.LITERAL),
+                        TipoSalidaIrPatron.IMP,
+                        1,
+                        3),
+                new PatronSemanticoLgs(
+                        "CUANDO_ELIPTICO",
+                        List.of(TipoTokenNatural.CUANDO, TipoTokenNatural.LITERAL, TipoTokenNatural.LITERAL),
+                        TipoSalidaIrPatron.IMP,
+                        1,
+                        2),
+                new PatronSemanticoLgs(
+                        "SOLO_SI",
+                        List.of(TipoTokenNatural.LITERAL, TipoTokenNatural.SOLO_SI, TipoTokenNatural.LITERAL),
+                        TipoSalidaIrPatron.IMP,
+                        0,
+                        2),
+                new PatronSemanticoLgs(
+                        "A_MENOS_QUE",
+                        List.of(TipoTokenNatural.LITERAL, TipoTokenNatural.A_MENOS_QUE, TipoTokenNatural.LITERAL),
+                        TipoSalidaIrPatron.IMP_UNLESS,
+                        0,
                         2),
                 new PatronSemanticoLgs(
                         "SIEMPRE_QUE_ENTONCES",
