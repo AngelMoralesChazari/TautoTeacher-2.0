@@ -1,6 +1,8 @@
-# LogicScript — datos léxicos y patrones v0.3
+# LogicScript — datos léxicos y patrones v0.4
+# Fase A léxica: conjugaciones regulares vía NormalizadorMorfologico (Java).
+# lemma: solo irregulares, sustantivos fijos y excepciones morfológicas.
 
-version 0.3
+version 0.4
 
 # Lluvia
 lemma llueve -> llover
@@ -18,17 +20,7 @@ lemma llevara -> llevar
 lemma llevaria -> llevar
 lemma llevare -> llevar
 
-# Estudiar
-lemma estudio -> estudiar
-lemma estudias -> estudiar
-lemma estudia -> estudiar
-lemma estudian -> estudiar
-lemma estudie -> estudiar
-lemma estudiare -> estudiar
-lemma estudiaria -> estudiar
-lemma estudiaba -> estudiar
-
-# Aprobar
+# Estudiar / aprobar — irregulares en aprobar; estudiar cubierto por morfología (-ar)
 lemma apruebo -> aprobar
 lemma apruebas -> aprobar
 lemma aprueba -> aprobar
@@ -38,24 +30,11 @@ lemma aprobo -> aprobar
 lemma aprobara -> aprobar
 lemma aprobare -> aprobar
 
-# Fallar
-lemma fallo -> fallar
-lemma fallas -> fallar
-lemma falla -> fallar
-lemma fallan -> fallar
-lemma fallare -> fallar
+# Fallar — morfología -ar; sin lemma salvo si falla en pruebas
 
-# Trabajar / descansar
-lemma trabajo -> trabajar
-lemma trabajas -> trabajar
-lemma trabaja -> trabajar
-lemma trabajan -> trabajar
-lemma descanso -> descansar
-lemma descansas -> descansar
-lemma descansa -> descansar
-lemma descansan -> descansar
+# Trabajar / descansar — morfología -ar
 
-# Salir
+# Salir — irregular
 lemma salgo -> salir
 lemma sales -> salir
 lemma sale -> salir
@@ -63,12 +42,9 @@ lemma salen -> salir
 lemma saldre -> salir
 lemma saldria -> salir
 
-# Clima / vestimenta
+# Clima / vestimenta (sustantivos + irregulares)
 lemma solea -> hacer_sol
 lemma hace -> hacer
-lemma uso -> usar
-lemma usas -> usar
-lemma usa -> usar
 lemma gorra -> gorra
 lemma sombrero -> sombrero
 lemma paraguas -> paraguas
@@ -77,40 +53,22 @@ lemma niegue -> nevar
 lemma calor -> calor
 lemma frio -> frio
 
-# Practicar
-lemma practico -> practicar
-lemma practicas -> practicar
-lemma practica -> practicar
-lemma practican -> practicar
+# Practicar — morfología -ar
 
-# Dormir
-lemma duermo -> dormir
-lemma duermes -> dormir
-lemma duerme -> dormir
-lemma duermen -> dormir
+# Dormir — morfología: duermo→dormir (1ª pers.); duerme/duermes requieren lemma si fallan:
+# lemma duerme -> dormir
+# lemma duermes -> dormir
 
-# Movimiento / acciones frecuentes en examen
+# Movimiento — irregulares
 lemma voy -> ir
 lemma vas -> ir
 lemma va -> ir
 lemma van -> ir
 lemma ire -> ir
-lemma llego -> llegar
-lemma llegas -> llegar
-lemma llega -> llegar
-lemma compro -> comprar
-lemma compras -> comprar
-lemma compra -> comprar
-lemma necesito -> necesitar
-lemma necesitas -> necesitar
 lemma puedo -> poder
 lemma puedes -> poder
 lemma quiero -> querer
 lemma quieres -> querer
-lemma entro -> entrar
-lemma entras -> entrar
-lemma paso -> pasar
-lemma pasas -> pasar
 
 # Patrones semánticos (orden = prioridad de coincidencia)
 pattern SI_CONJ_Y_ENTONCES si literal y literal entonces literal => imp_and left=1 mid=3 right=5
