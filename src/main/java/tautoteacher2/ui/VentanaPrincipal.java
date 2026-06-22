@@ -102,7 +102,7 @@ public class VentanaPrincipal extends JFrame {
         tarjetas.setPreferredSize(new Dimension(0, 120));
         tarjetas.setOpaque(false);
         tarjetas.add(crearTarjeta("Análisis Rápido", "Verifica expresiones lógicas en tiempo real", "analisis"));
-        tarjetas.add(crearTarjeta("Visualización Clara", "Tabla de verdad, árbol por fila y colores V/F", "visualizacion"));
+        tarjetas.add(crearTarjeta("Visualización Clara", "Pestañas Tabla de verdad y Árbol de evaluación", "visualizacion"));
         tarjetas.add(crearTarjeta("Explicación", "Traducción y demostración educativa", "educativo"));
 
         JPanel norte = new JPanel();
@@ -171,7 +171,7 @@ public class VentanaPrincipal extends JFrame {
             "Fórmula lógica: símbolos ∧ ∨ ¬ → ↔ y paréntesis; ejemplos: \"p → q\", \"¬(p ∧ ¬q)\".",
             "Lenguaje natural: escriba su enunciado en español.",
             "Resultado: explicación breve y dictamen.",
-            "Visualización Clara: tabla de verdad, árbol al seleccionar fila; se abre al procesar.",
+            "Visualización Clara: pestaña Tabla (V/F con colores) y pestaña Árbol (por interpretación).",
             "Explicación: traducción, pasos LogicScript y demostración educativa."
         };
         for (String instruccion : instrucciones) {

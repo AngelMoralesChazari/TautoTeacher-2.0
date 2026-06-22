@@ -67,8 +67,7 @@ public final class ExplicacionEducativaBuilder {
         StringBuilder sb = new StringBuilder();
         sb.append("Por qué es ").append(tipo).append("\n");
         sb.append("────────────────────\n\n");
-        sb.append("  Consulte la tabla en «Visualización Clara». ");
-        sb.append("Seleccione una fila para ver el árbol de evaluación de esa interpretación.\n\n");
+        sb.append("  Consulte «Visualización Clara» (pestaña Tabla o Árbol).\n\n");
 
         if ("CONTRADICCIÓN".equals(tipo)) {
             Fila ejemplo = tabla.filas().get(0);

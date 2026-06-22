@@ -7,10 +7,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.BorderFactory;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
@@ -24,7 +25,7 @@ import tautoteacher2.core.visualizacion.ConstructorArbolEvaluacion;
 import tautoteacher2.core.visualizacion.RenderizadorArbolEvaluacion;
 
 /**
- * Panel «Visualización Clara»: tabla de verdad, colores V/F y árbol de evaluación por fila.
+ * Panel «Visualización Clara»: pestañas Tabla de verdad y Árbol de evaluación.
  */
 public class PanelVisualizacion extends JPanel {
 
@@ -38,11 +39,13 @@ public class PanelVisualizacion extends JPanel {
     private final JTable tabla;
     private final DefaultTableModel modelo;
     private final JTextArea areaArbol;
-    private final JLabel etiquetaFilaSeleccionada;
+    private final JComboBox<String> selectorFilaArbol;
+    private final JLabel etiquetaInterpretacionArbol;
 
     private TablaVerdad.Resultado resultadoActual;
     private String formulaActual = "";
     private Map<String, String> proposicionesActuales = Map.of();
+    private boolean actualizandoSeleccion;
 
     public PanelVisualizacion() {
         setLayout(new java.awt.BorderLayout(0, 12));
@@ -62,16 +65,9 @@ public class PanelVisualizacion extends JPanel {
         etiquetaLeyenda.setForeground(new Color(80, 80, 80));
         etiquetaLeyenda.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        etiquetaFilaSeleccionada = new JLabel(" ");
-        etiquetaFilaSeleccionada.setFont(new Font("Segoe UI", Font.ITALIC, 12));
-        etiquetaFilaSeleccionada.setForeground(new Color(100, 100, 100));
-        etiquetaFilaSeleccionada.setAlignmentX(Component.LEFT_ALIGNMENT);
-
         encabezado.add(etiquetaFormula);
         encabezado.add(javax.swing.Box.createRigidArea(new java.awt.Dimension(0, 6)));
         encabezado.add(etiquetaLeyenda);
-        encabezado.add(javax.swing.Box.createRigidArea(new java.awt.Dimension(0, 4)));
-        encabezado.add(etiquetaFilaSeleccionada);
 
         modelo = new DefaultTableModel() {
             @Override
@@ -87,26 +83,57 @@ public class PanelVisualizacion extends JPanel {
         tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tabla.setDefaultRenderer(Object.class, new CeldaValorRenderer());
 
+        JScrollPane scrollTabla = new JScrollPane(tabla);
+        scrollTabla.setBorder(BorderFactory.createEmptyBorder());
+
         areaArbol = new JTextArea();
         areaArbol.setEditable(false);
         areaArbol.setFont(new Font("Consolas", Font.PLAIN, 14));
         areaArbol.setLineWrap(false);
-        areaArbol.setText("Seleccione una fila de la tabla para ver el árbol de evaluación.");
+        areaArbol.setText("Procese un enunciado y elija una interpretación para ver el árbol.");
 
-        JScrollPane scrollTabla = new JScrollPane(tabla);
-        scrollTabla.setBorder(BorderFactory.createTitledBorder("Tabla de verdad"));
+        selectorFilaArbol = new JComboBox<>();
+        selectorFilaArbol.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        selectorFilaArbol.setEnabled(false);
+        selectorFilaArbol.addActionListener(e -> {
+            if (!actualizandoSeleccion && selectorFilaArbol.getSelectedIndex() >= 0) {
+                int fila = selectorFilaArbol.getSelectedIndex();
+                sincronizarSeleccionTabla(fila);
+                actualizarArbolFila(fila);
+            }
+        });
 
-        JScrollPane scrollArbol = new JScrollPane(areaArbol);
-        scrollArbol.setBorder(BorderFactory.createTitledBorder("Árbol de evaluación (fila seleccionada)"));
+        etiquetaInterpretacionArbol = new JLabel(" ");
+        etiquetaInterpretacionArbol.setFont(new Font("Segoe UI", Font.ITALIC, 12));
+        etiquetaInterpretacionArbol.setForeground(new Color(100, 100, 100));
 
-        JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, scrollTabla, scrollArbol);
-        split.setResizeWeight(0.55);
-        split.setOpaque(false);
+        JPanel panelArbol = new JPanel(new java.awt.BorderLayout(0, 8));
+        panelArbol.setOpaque(false);
+
+        JPanel barraArbol = new JPanel();
+        barraArbol.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 4));
+        barraArbol.setOpaque(false);
+        barraArbol.add(new JLabel("Interpretación:"));
+        barraArbol.add(selectorFilaArbol);
+
+        JPanel norteArbol = new JPanel();
+        norteArbol.setLayout(new javax.swing.BoxLayout(norteArbol, javax.swing.BoxLayout.Y_AXIS));
+        norteArbol.setOpaque(false);
+        norteArbol.add(barraArbol);
+        norteArbol.add(etiquetaInterpretacionArbol);
+
+        panelArbol.add(norteArbol, java.awt.BorderLayout.NORTH);
+        panelArbol.add(new JScrollPane(areaArbol), java.awt.BorderLayout.CENTER);
+
+        JTabbedPane pestanas = new JTabbedPane();
+        pestanas.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        pestanas.addTab("Tabla", scrollTabla);
+        pestanas.addTab("Árbol", panelArbol);
 
         tabla.getSelectionModel().addListSelectionListener(eventoSeleccionFila());
 
         add(encabezado, java.awt.BorderLayout.NORTH);
-        add(split, java.awt.BorderLayout.CENTER);
+        add(pestanas, java.awt.BorderLayout.CENTER);
     }
 
     public void mostrarTabla(TablaVerdad.Resultado resultado, Map<String, String> proposiciones) {
@@ -122,19 +149,13 @@ public class PanelVisualizacion extends JPanel {
 
         if (resultado.mensajeInformativo() != null && !resultado.mensajeInformativo().isBlank()) {
             etiquetaLeyenda.setText(resultado.mensajeInformativo());
-            etiquetaFilaSeleccionada.setText(" ");
-            modelo.setRowCount(0);
-            modelo.setColumnCount(0);
-            areaArbol.setText("No hay árbol: " + resultado.mensajeInformativo());
+            vaciarTablaYArbol(resultado.mensajeInformativo());
             return;
         }
 
         if (!resultado.tieneDatos()) {
             etiquetaLeyenda.setText("No hay datos para la tabla.");
-            etiquetaFilaSeleccionada.setText(" ");
-            modelo.setRowCount(0);
-            modelo.setColumnCount(0);
-            areaArbol.setText("No hay datos para el árbol de evaluación.");
+            vaciarTablaYArbol("No hay datos para el árbol de evaluación.");
             return;
         }
 
@@ -152,6 +173,9 @@ public class PanelVisualizacion extends JPanel {
         modelo.setColumnIdentifiers(columnas);
         modelo.setRowCount(0);
 
+        actualizandoSeleccion = true;
+        selectorFilaArbol.removeAllItems();
+        int indice = 0;
         for (Fila fila : resultado.filas()) {
             Object[] celdas = new Object[columnas.length];
             for (int i = 0; i < fila.valoresVariables().length; i++) {
@@ -159,7 +183,11 @@ public class PanelVisualizacion extends JPanel {
             }
             celdas[columnas.length - 1] = fila.resultadoFormula();
             modelo.addRow(celdas);
+            selectorFilaArbol.addItem(etiquetaFilaCombo(indice, resultado.variables(), fila, simboloALema));
+            indice++;
         }
+        selectorFilaArbol.setEnabled(true);
+        actualizandoSeleccion = false;
 
         for (int i = 0; i < columnas.length; i++) {
             tabla.getColumnModel().getColumn(i).setPreferredWidth(i == columnas.length - 1 ? 120 : 90);
@@ -167,8 +195,7 @@ public class PanelVisualizacion extends JPanel {
 
         if (tabla.getRowCount() > 0) {
             int filaInicial = filaInicialSugerida(resultado);
-            tabla.setRowSelectionInterval(filaInicial, filaInicial);
-            actualizarArbolFila(filaInicial, simboloALema);
+            seleccionarFila(filaInicial);
         }
     }
 
@@ -178,10 +205,25 @@ public class PanelVisualizacion extends JPanel {
         proposicionesActuales = Map.of();
         etiquetaFormula.setText("Procese un enunciado para ver la tabla de verdad.");
         etiquetaLeyenda.setText(" ");
-        etiquetaFilaSeleccionada.setText(" ");
+        etiquetaInterpretacionArbol.setText(" ");
         modelo.setRowCount(0);
         modelo.setColumnCount(0);
-        areaArbol.setText("Seleccione una fila de la tabla para ver el árbol de evaluación.");
+        actualizandoSeleccion = true;
+        selectorFilaArbol.removeAllItems();
+        selectorFilaArbol.setEnabled(false);
+        actualizandoSeleccion = false;
+        areaArbol.setText("Procese un enunciado y elija una interpretación para ver el árbol.");
+    }
+
+    private void vaciarTablaYArbol(String mensajeArbol) {
+        etiquetaInterpretacionArbol.setText(" ");
+        modelo.setRowCount(0);
+        modelo.setColumnCount(0);
+        actualizandoSeleccion = true;
+        selectorFilaArbol.removeAllItems();
+        selectorFilaArbol.setEnabled(false);
+        actualizandoSeleccion = false;
+        areaArbol.setText(mensajeArbol);
     }
 
     private ListSelectionListener eventoSeleccionFila() {
@@ -191,12 +233,35 @@ public class PanelVisualizacion extends JPanel {
             }
             int fila = tabla.getSelectedRow();
             if (fila >= 0) {
-                actualizarArbolFila(fila, proposicionesActuales);
+                actualizandoSeleccion = true;
+                selectorFilaArbol.setSelectedIndex(fila);
+                actualizandoSeleccion = false;
+                actualizarArbolFila(fila);
             }
         };
     }
 
-    private void actualizarArbolFila(int indiceFila, Map<String, String> simboloALema) {
+    private void seleccionarFila(int indiceFila) {
+        if (indiceFila < 0 || indiceFila >= tabla.getRowCount()) {
+            return;
+        }
+        actualizandoSeleccion = true;
+        tabla.setRowSelectionInterval(indiceFila, indiceFila);
+        selectorFilaArbol.setSelectedIndex(indiceFila);
+        actualizandoSeleccion = false;
+        actualizarArbolFila(indiceFila);
+    }
+
+    private void sincronizarSeleccionTabla(int indiceFila) {
+        if (indiceFila < 0 || indiceFila >= tabla.getRowCount()) {
+            return;
+        }
+        actualizandoSeleccion = true;
+        tabla.setRowSelectionInterval(indiceFila, indiceFila);
+        actualizandoSeleccion = false;
+    }
+
+    private void actualizarArbolFila(int indiceFila) {
         if (resultadoActual == null || formulaActual.isBlank() || indiceFila < 0) {
             return;
         }
@@ -211,12 +276,21 @@ public class PanelVisualizacion extends JPanel {
         areaArbol.setText(RenderizadorArbolEvaluacion.renderizar(raiz));
         areaArbol.setCaretPosition(0);
 
-        etiquetaFilaSeleccionada.setText(
-                "Fila " + (indiceFila + 1) + ": " + describirValores(resultadoActual.variables(), fila, simboloALema)
+        etiquetaInterpretacionArbol.setText(
+                describirValores(resultadoActual.variables(), fila, proposicionesActuales)
                         + " → resultado " + (fila.resultadoFormula() ? "V" : "F"));
     }
 
-    /** Prioriza una fila donde la fórmula sea V (útil en contingencia). */
+    private static String etiquetaFilaCombo(
+            int numero,
+            List<String> variables,
+            Fila fila,
+            Map<String, String> simboloALema
+    ) {
+        return "Fila " + (numero + 1) + " — " + describirValores(variables, fila, simboloALema)
+                + " → " + (fila.resultadoFormula() ? "V" : "F");
+    }
+
     private static int filaInicialSugerida(TablaVerdad.Resultado resultado) {
         List<Fila> filas = resultado.filas();
         for (int i = 0; i < filas.size(); i++) {
@@ -250,8 +324,7 @@ public class PanelVisualizacion extends JPanel {
 
     private static String formatearLeyenda(List<String> variables, Map<String, String> simboloALema) {
         if (simboloALema.isEmpty()) {
-            return "Filas: todas las combinaciones de valores V (verdadero) y F (falso). "
-                    + "Seleccione una fila para el árbol de evaluación.";
+            return "Pestaña Tabla: combinaciones V/F. Pestaña Árbol: elija la interpretación a evaluar.";
         }
         StringBuilder sb = new StringBuilder("Leyenda: ");
         for (int i = 0; i < variables.size(); i++) {
@@ -262,7 +335,6 @@ public class PanelVisualizacion extends JPanel {
             String lema = simboloALema.getOrDefault(var, var);
             sb.append(var).append(" = ").append(lema.replace('_', ' '));
         }
-        sb.append(" — seleccione una fila para el árbol.");
         return sb.toString();
     }
 
