@@ -12,8 +12,11 @@ public final class NaturalLexer {
     private static final String PALABRAS_CLAVE[] = {
             "en caso de que ",
             "si y solo si ",
+            "a menos que ",
             "siempre que ",
+            "solo si ",
             "entonces ",
+            "cuando ",
             "si ",
             " y ",
             " o ",
@@ -22,8 +25,11 @@ public final class NaturalLexer {
     private static final TipoTokenNatural TIPOS[] = {
             TipoTokenNatural.EN_CASO_DE_QUE,
             TipoTokenNatural.SI_Y_SOLO_SI,
+            TipoTokenNatural.A_MENOS_QUE,
             TipoTokenNatural.SIEMPRE_QUE,
+            TipoTokenNatural.SOLO_SI,
             TipoTokenNatural.ENTONCES,
+            TipoTokenNatural.CUANDO,
             TipoTokenNatural.SI,
             TipoTokenNatural.Y,
             TipoTokenNatural.O,
@@ -69,8 +75,17 @@ public final class NaturalLexer {
      * siendo un solo literal (*llevo paraguas*).
      */
     private static void agregarLiterales(List<TokenNatural> salida, String lit) {
-        if (ultimoTokenPermiteElipsis(salida) && literalSinConectoresInternos(lit)) {
-            for (String palabra : fusionarPrefijosNo(lit.split("\\s+"))) {
+        if ((ultimoTokenPermiteElipsis(salida) || ultimoTokenParteLiteralEnPalabras(salida))
+                && literalSinConectoresInternos(lit)) {
+            List<String> palabras = fusionarPrefijosNo(lit.split("\\s+"));
+            if (ultimoTokenPermiteElipsis(salida) && palabras.size() >= 3) {
+                salida.add(new TokenNatural(TipoTokenNatural.LITERAL, palabras.get(0)));
+                salida.add(new TokenNatural(
+                        TipoTokenNatural.LITERAL,
+                        String.join(" ", palabras.subList(1, palabras.size()))));
+                return;
+            }
+            for (String palabra : palabras) {
                 if (!palabra.isEmpty()) {
                     salida.add(new TokenNatural(TipoTokenNatural.LITERAL, palabra));
                 }
@@ -80,12 +95,35 @@ public final class NaturalLexer {
         salida.add(new TokenNatural(TipoTokenNatural.LITERAL, lit));
     }
 
+    /** Tras {@code y}/{@code o} dentro de un bloque {@code si …} sin {@code entonces}, cada palabra es un literal. */
+    private static boolean ultimoTokenParteLiteralEnPalabras(List<TokenNatural> salida) {
+        if (salida.isEmpty()) {
+            return false;
+        }
+        TipoTokenNatural ultimo = salida.get(salida.size() - 1).getTipo();
+        if (ultimo != TipoTokenNatural.Y && ultimo != TipoTokenNatural.O) {
+            return false;
+        }
+        boolean vistoSi = false;
+        for (TokenNatural t : salida) {
+            if (t.getTipo() == TipoTokenNatural.ENTONCES) {
+                return false;
+            }
+            if (t.getTipo() == TipoTokenNatural.SI) {
+                vistoSi = true;
+            }
+        }
+        return vistoSi;
+    }
+
     private static boolean ultimoTokenPermiteElipsis(List<TokenNatural> salida) {
         if (salida.isEmpty()) {
             return false;
         }
         TipoTokenNatural t = salida.get(salida.size() - 1).getTipo();
-        return t == TipoTokenNatural.SI || t == TipoTokenNatural.SIEMPRE_QUE;
+        return t == TipoTokenNatural.SI
+                || t == TipoTokenNatural.SIEMPRE_QUE
+                || t == TipoTokenNatural.CUANDO;
     }
 
     private static boolean literalSinConectoresInternos(String lit) {
