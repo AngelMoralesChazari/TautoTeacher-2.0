@@ -104,16 +104,22 @@ public final class NaturalLexer {
         if (ultimo != TipoTokenNatural.Y && ultimo != TipoTokenNatural.O) {
             return false;
         }
-        boolean vistoSi = false;
+        boolean vistoCondicional = false;
         for (TokenNatural t : salida) {
             if (t.getTipo() == TipoTokenNatural.ENTONCES) {
                 return false;
             }
-            if (t.getTipo() == TipoTokenNatural.SI) {
-                vistoSi = true;
+            if (esInicioBloqueCondicional(t.getTipo())) {
+                vistoCondicional = true;
             }
         }
-        return vistoSi;
+        return vistoCondicional;
+    }
+
+    private static boolean esInicioBloqueCondicional(TipoTokenNatural tipo) {
+        return tipo == TipoTokenNatural.SI
+                || tipo == TipoTokenNatural.SIEMPRE_QUE
+                || tipo == TipoTokenNatural.CUANDO;
     }
 
     private static boolean ultimoTokenPermiteElipsis(List<TokenNatural> salida) {
