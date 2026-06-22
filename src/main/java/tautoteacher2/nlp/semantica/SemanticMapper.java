@@ -148,6 +148,66 @@ public class SemanticMapper {
                         5,
                         3),
                 new PatronSemanticoLgs(
+                        "SI_DISY_O_ELIPTICO",
+                        List.of(
+                                TipoTokenNatural.SI,
+                                TipoTokenNatural.LITERAL,
+                                TipoTokenNatural.O,
+                                TipoTokenNatural.LITERAL,
+                                TipoTokenNatural.LITERAL),
+                        TipoSalidaIrPatron.IMP_OR_ANT,
+                        1,
+                        4,
+                        3),
+                new PatronSemanticoLgs(
+                        "SIEMPRE_QUE_CONJ_Y_ELIPTICO",
+                        List.of(
+                                TipoTokenNatural.SIEMPRE_QUE,
+                                TipoTokenNatural.LITERAL,
+                                TipoTokenNatural.Y,
+                                TipoTokenNatural.LITERAL,
+                                TipoTokenNatural.LITERAL),
+                        TipoSalidaIrPatron.IMP_AND,
+                        1,
+                        4,
+                        3),
+                new PatronSemanticoLgs(
+                        "SIEMPRE_QUE_DISY_O_ELIPTICO",
+                        List.of(
+                                TipoTokenNatural.SIEMPRE_QUE,
+                                TipoTokenNatural.LITERAL,
+                                TipoTokenNatural.O,
+                                TipoTokenNatural.LITERAL,
+                                TipoTokenNatural.LITERAL),
+                        TipoSalidaIrPatron.IMP_OR_ANT,
+                        1,
+                        4,
+                        3),
+                new PatronSemanticoLgs(
+                        "CUANDO_CONJ_Y_ELIPTICO",
+                        List.of(
+                                TipoTokenNatural.CUANDO,
+                                TipoTokenNatural.LITERAL,
+                                TipoTokenNatural.Y,
+                                TipoTokenNatural.LITERAL,
+                                TipoTokenNatural.LITERAL),
+                        TipoSalidaIrPatron.IMP_AND,
+                        1,
+                        4,
+                        3),
+                new PatronSemanticoLgs(
+                        "CUANDO_DISY_O_ELIPTICO",
+                        List.of(
+                                TipoTokenNatural.CUANDO,
+                                TipoTokenNatural.LITERAL,
+                                TipoTokenNatural.O,
+                                TipoTokenNatural.LITERAL,
+                                TipoTokenNatural.LITERAL),
+                        TipoSalidaIrPatron.IMP_OR_ANT,
+                        1,
+                        4,
+                        3),
+                new PatronSemanticoLgs(
                         "SI_CONJ_Y_ELIPTICO",
                         List.of(
                                 TipoTokenNatural.SI,
