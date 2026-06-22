@@ -15,5 +15,11 @@ public enum TipoSalidaIrPatron {
     /** Implicación con antecedente conjunción: ({@code AndExpr}) → consecuente. */
     IMP_AND,
     /** Implicación con consecuente disyunción: antecedente → ({@code OrExpr}). */
-    IMP_OR
+    IMP_OR,
+    /** Implicación con antecedente disyunción: ({@code OrExpr}) → consecuente. */
+    IMP_OR_ANT,
+    /** Implicación con consecuente conjunción: antecedente → ({@code AndExpr}). */
+    IMP_AND_CONS,
+    /** Excepción (*a menos que*): ¬right → left. */
+    IMP_UNLESS
 }

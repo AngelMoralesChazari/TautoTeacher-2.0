@@ -181,8 +181,11 @@ public final class LgsCargador {
         if (left < 0 || right < 0) {
             throw new IOException("Línea " + numLinea + ": faltan left= e right= en pattern: " + linea);
         }
-        if ((tipoIr == TipoSalidaIrPatron.IMP_AND || tipoIr == TipoSalidaIrPatron.IMP_OR) && mid < 0) {
-            throw new IOException("Línea " + numLinea + ": imp_and/imp_or requieren mid=: " + linea);
+        if ((tipoIr == TipoSalidaIrPatron.IMP_AND
+                || tipoIr == TipoSalidaIrPatron.IMP_OR
+                || tipoIr == TipoSalidaIrPatron.IMP_OR_ANT
+                || tipoIr == TipoSalidaIrPatron.IMP_AND_CONS) && mid < 0) {
+            throw new IOException("Línea " + numLinea + ": imp_and/imp_or/imp_or_ant/imp_and_cons requieren mid=: " + linea);
         }
         try {
             return new PatronSemanticoLgs(nombre, forma, tipoIr, left, right, mid);
@@ -208,7 +211,10 @@ public final class LgsCargador {
             case "equiv", "equivalente", "iff", "bicondicional" -> TipoSalidaIrPatron.EQUIV;
             case "imp_and" -> TipoSalidaIrPatron.IMP_AND;
             case "imp_or" -> TipoSalidaIrPatron.IMP_OR;
-            default -> throw new IOException("Línea " + numLinea + ": tipo IR desconocido (use imp, and, or, equiv, imp_and, imp_or): " + token);
+            case "imp_or_ant" -> TipoSalidaIrPatron.IMP_OR_ANT;
+            case "imp_and_cons" -> TipoSalidaIrPatron.IMP_AND_CONS;
+            case "imp_unless" -> TipoSalidaIrPatron.IMP_UNLESS;
+            default -> throw new IOException("Línea " + numLinea + ": tipo IR desconocido (use imp, and, or, equiv, imp_and, imp_or, imp_or_ant, imp_and_cons, imp_unless): " + token);
         };
     }
 
@@ -220,6 +226,9 @@ public final class LgsCargador {
             case "en_caso_de_que" -> TipoTokenNatural.EN_CASO_DE_QUE;
             case "si_y_solo_si" -> TipoTokenNatural.SI_Y_SOLO_SI;
             case "siempre_que" -> TipoTokenNatural.SIEMPRE_QUE;
+            case "cuando" -> TipoTokenNatural.CUANDO;
+            case "solo_si" -> TipoTokenNatural.SOLO_SI;
+            case "a_menos_que" -> TipoTokenNatural.A_MENOS_QUE;
             case "y" -> TipoTokenNatural.Y;
             case "o" -> TipoTokenNatural.O;
             case "literal" -> TipoTokenNatural.LITERAL;

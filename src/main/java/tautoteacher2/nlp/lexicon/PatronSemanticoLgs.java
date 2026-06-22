@@ -31,10 +31,13 @@ public record PatronSemanticoLgs(
         }
         validarIndice(forma, indiceIzq, "left");
         validarIndice(forma, indiceDer, "right");
-        if (tipoIr == TipoSalidaIrPatron.IMP_AND || tipoIr == TipoSalidaIrPatron.IMP_OR) {
+        if (tipoIr == TipoSalidaIrPatron.IMP_AND
+                || tipoIr == TipoSalidaIrPatron.IMP_OR
+                || tipoIr == TipoSalidaIrPatron.IMP_OR_ANT
+                || tipoIr == TipoSalidaIrPatron.IMP_AND_CONS) {
             validarIndice(forma, indiceMedio, "mid");
         } else if (indiceMedio >= 0) {
-            throw new IllegalArgumentException("mid solo aplica a imp_and/imp_or: " + nombre);
+            throw new IllegalArgumentException("mid solo aplica a imp_and/imp_or/imp_or_ant/imp_and_cons: " + nombre);
         }
     }
 
