@@ -1,8 +1,7 @@
-# LogicScript — datos léxicos y patrones v0.4
-# Fase A léxica: conjugaciones regulares vía NormalizadorMorfologico (Java).
-# lemma: solo irregulares, sustantivos fijos y excepciones morfológicas.
+# LogicScript — datos léxicos y patrones v0.5
+# Fase B: patrones semánticos elípticos compuestos (si/cuando/siempre que + y/o sin entonces).
 
-version 0.4
+version 0.5
 
 # Lluvia
 lemma llueve -> llover
@@ -75,6 +74,11 @@ pattern SI_CONJ_Y_ENTONCES si literal y literal entonces literal => imp_and left
 pattern SI_ENTONCES_DISY_CONS si literal entonces literal o literal => imp_or left=1 mid=3 right=5
 pattern SI_ENTONCES_CONJ_CONS si literal entonces literal y literal => imp_and_cons left=1 mid=3 right=5
 pattern SI_DISY_O_ENTONCES si literal o literal entonces literal => imp_or_ant left=1 mid=3 right=5
+pattern SI_DISY_O_ELIPTICO si literal o literal literal => imp_or_ant left=1 mid=3 right=4
+pattern SIEMPRE_QUE_CONJ_Y_ELIPTICO siempre_que literal y literal literal => imp_and left=1 mid=3 right=4
+pattern SIEMPRE_QUE_DISY_O_ELIPTICO siempre_que literal o literal literal => imp_or_ant left=1 mid=3 right=4
+pattern CUANDO_CONJ_Y_ELIPTICO cuando literal y literal literal => imp_and left=1 mid=3 right=4
+pattern CUANDO_DISY_O_ELIPTICO cuando literal o literal literal => imp_or_ant left=1 mid=3 right=4
 pattern SI_CONJ_Y_ELIPTICO si literal y literal literal => imp_and left=1 mid=3 right=4
 pattern SI_ENTONCES si literal entonces literal => imp left=1 right=3
 pattern SI_ELIPTICO si literal literal => imp left=1 right=2
