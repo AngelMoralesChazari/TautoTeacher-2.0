@@ -1,13 +1,16 @@
 package tautoteacher2.logicscript;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import tautoteacher2.nlp.lexicon.ContenidoLgs;
 import tautoteacher2.nlp.lexicon.EstadoCargaLgs;
 import tautoteacher2.nlp.lexicon.LgsCargador;
+import tautoteacher2.nlp.lexicon.NormalizadorMorfologico;
 import tautoteacher2.nlp.lexicon.ResultadoCargaLgs;
 
 /**
@@ -35,6 +38,7 @@ public final class LogicScriptRegressionHarness {
     public static void main(String[] args) {
         int fallos = 0;
         fallos += verificarDiagnosticoCargaLgs();
+        fallos += verificarLexruleCarga();
 
         List<Caso> casos = new ArrayList<>();
         casos.add(new Caso("si_entonces", "si llueve entonces llevo paraguas", true, "(p " + IMP + " q)"));
@@ -173,6 +177,34 @@ public final class LogicScriptRegressionHarness {
         } else if (!r.mensaje().contains("Línea 1")) {
             fallos++;
             System.err.println("FALLO [lgs_sintaxis]: mensaje sin número de línea: " + r.mensaje());
+        }
+        return fallos;
+    }
+
+    private static int verificarLexruleCarga() {
+        int fallos = 0;
+        String invalido = "lexrule sufijo o infinitivo xyz\n";
+        ResultadoCargaLgs mal = LgsCargador.cargarConDiagnostico(
+                new ByteArrayInputStream(invalido.getBytes(StandardCharsets.UTF_8)),
+                "test-lexrule-invalido.lgs");
+        if (!mal.bloqueaTraduccion() || mal.estado() != EstadoCargaLgs.ERROR_SINTAXIS) {
+            fallos++;
+            System.err.println("FALLO [lexrule_sintaxis]: se esperaba ERROR_SINTAXIS bloqueante");
+        }
+
+        String personalizado = "version 0.6\nlexrule sufijo ado infinitivo ar\n";
+        try {
+            ContenidoLgs contenido = LgsCargador.cargar(
+                    new ByteArrayInputStream(personalizado.getBytes(StandardCharsets.UTF_8)));
+            NormalizadorMorfologico morfo = new NormalizadorMorfologico(contenido.morfologia());
+            String canon = morfo.normalizar("organizado");
+            if (!"organizar".equals(canon)) {
+                fallos++;
+                System.err.println("FALLO [lexrule_carga]: organizado -> " + canon + ", esperaba organizar");
+            }
+        } catch (IOException e) {
+            fallos++;
+            System.err.println("FALLO [lexrule_carga]: " + e.getMessage());
         }
         return fallos;
     }
