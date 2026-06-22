@@ -8,7 +8,7 @@ import java.util.Objects;
  * Base de conocimiento léxica para LogicScript:
  * <ol>
  *   <li>{@code lemma} explícitos en {@code .lgs} (prioridad máxima, irregulares y excepciones)</li>
- *   <li>{@link NormalizadorMorfologico} (reglas de sufijos, Fase A)</li>
+ *   <li>{@link NormalizadorMorfologico} (reglas {@code lexrule} en {@code .lgs} o respaldo embebido)</li>
  *   <li>forma literal sin cambio (fallback)</li>
  * </ol>
  * Los patrones semánticos ({@code pattern}) no sustituyen esta capa: definen la estructura,
@@ -19,14 +19,14 @@ public class BaseConocimiento {
     private static final String RECURSO_LEMAS = "logicscript/core.lgs";
 
     private final Map<String, String> lemas = new HashMap<>();
-    private final NormalizadorMorfologico normalizadorMorfologico = new NormalizadorMorfologico();
+    private final NormalizadorMorfologico normalizadorMorfologico;
 
     public BaseConocimiento() {
         this(LgsCargador.cargarDesdeClasspath(RECURSO_LEMAS));
     }
 
     /**
-     * Usa el mismo {@link ContenidoLgs} que puede incluir patrones; aquí solo se consumen los lemas.
+     * Usa el mismo {@link ContenidoLgs} que puede incluir patrones y {@code lexrule}; aquí se consumen lemas y morfología.
      */
     public BaseConocimiento(ContenidoLgs contenido) {
         Objects.requireNonNull(contenido, "contenido");
@@ -36,6 +36,7 @@ public class BaseConocimiento {
         } else {
             registrarLemasIniciales();
         }
+        normalizadorMorfologico = new NormalizadorMorfologico(contenido.morfologia());
     }
 
     public String canonicalizarFragmento(String fragmento) {
