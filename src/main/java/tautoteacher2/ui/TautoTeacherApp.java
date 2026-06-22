@@ -59,6 +59,7 @@ public class TautoTeacherApp {
                     tipo,
                     Map.of()));
             actualizarVisualizacion(formula, Map.of());
+            ventana.mostrarSeccion("visualizacion");
         } catch (Exception ex) {
             panelResultado.limpiarIcono();
             panelResultado.setResultado("Error al analizar la expresión: " + ex.getMessage(), COLOR_ERROR);
@@ -102,6 +103,7 @@ public class TautoTeacherApp {
                     tipo,
                     traduccion.getProposiciones()));
             actualizarVisualizacion(formula, traduccion.getProposiciones());
+            ventana.mostrarSeccion("visualizacion");
         } catch (Exception ex) {
             panelResultado.limpiarIcono();
             panelResultado.setResultado("Error al analizar el enunciado: " + ex.getMessage(), COLOR_ERROR);
