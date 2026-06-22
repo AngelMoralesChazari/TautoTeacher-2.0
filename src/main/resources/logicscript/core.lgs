@@ -78,9 +78,12 @@ lemma frio -> frio
 
 # Practicar — morfología -ar
 
-# Dormir — morfología: duermo→dormir (1ª pers.); duerme/duermes requieren lemma si fallan:
-# lemma duerme -> dormir
-# lemma duermes -> dormir
+# Dormir — duermo vía morfología (-o); 3.ª/2.ª pers. cambio vocálico (duerm-)
+lemma duerme -> dormir
+lemma duermes -> dormir
+lemma duermen -> dormir
+lemma duerma -> dormir
+lemma duermas -> dormir
 
 # Movimiento — irregulares
 lemma voy -> ir
@@ -90,8 +93,17 @@ lemma van -> ir
 lemma ire -> ir
 lemma puedo -> poder
 lemma puedes -> poder
+lemma puede -> poder
+lemma pueden -> poder
+lemma pueda -> poder
 lemma quiero -> querer
 lemma quieres -> querer
+lemma quiere -> querer
+lemma quieren -> querer
+lemma tengo -> tener
+lemma tienes -> tener
+lemma tiene -> tener
+lemma tienen -> tener
 
 # Patrones semánticos (orden = prioridad de coincidencia)
 pattern SI_CONJ_Y_ENTONCES si literal y literal entonces literal => imp_and left=1 mid=3 right=5
