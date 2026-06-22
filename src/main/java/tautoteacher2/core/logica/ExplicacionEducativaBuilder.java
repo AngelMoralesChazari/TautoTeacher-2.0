@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import tautoteacher2.core.logica.TablaVerdad.Fila;
+
 /**
  * Arma el texto del panel «Explicación»: sección técnica + demostración educativa
  * con símbolos sustituidos por lemas en español cuando hay mapa LogicScript.
@@ -24,6 +26,7 @@ public final class ExplicacionEducativaBuilder {
 
         Map<String, String> simboloALema = invertirMapaProposiciones(proposiciones);
         boolean esTautologia = "TAUTOLOGÍA".equals(tipo);
+        String tipoNorm = tipo != null ? tipo.toUpperCase() : "";
 
         sb.append("\n\n");
         sb.append("═══════════════════════════════════\n");
@@ -36,10 +39,84 @@ public final class ExplicacionEducativaBuilder {
             sb.append("  ").append(aplicarLeyendas(formula, simboloALema)).append("\n\n");
         }
 
-        String formulaParaAnalisis = quitarParentesisExternos(formula);
-        String demostracion = MotorLogico.generarExplicacionEducativa(formulaParaAnalisis, esTautologia);
-        sb.append(aplicarLeyendas(demostracion, simboloALema));
+        if ("CONTINGENCIA".equals(tipoNorm) || "CONTRADICCIÓN".equals(tipoNorm)) {
+            sb.append(seccionInterpretaciones(formula, tipoNorm, simboloALema));
+            sb.append("\n");
+        }
 
+        if (esTautologia || "CONTINGENCIA".equals(tipoNorm)) {
+            String formulaParaAnalisis = quitarParentesisExternos(formula);
+            String demostracion = MotorLogico.generarExplicacionEducativa(formulaParaAnalisis, esTautologia);
+            sb.append(aplicarLeyendas(demostracion, simboloALema));
+        } else if ("CONTRADICCIÓN".equals(tipoNorm)) {
+            sb.append("Demostración\n");
+            sb.append("────────────\n\n");
+            sb.append("  La fórmula es falsa en todas las filas de la tabla de verdad.\n");
+            sb.append("  No existe interpretación que la haga verdadera.\n");
+        }
+
+        return sb.toString();
+    }
+
+    private static String seccionInterpretaciones(String formula, String tipo, Map<String, String> simboloALema) {
+        TablaVerdad.Resultado tabla = TablaVerdad.construir(formula);
+        if (!tabla.tieneDatos()) {
+            return "";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Por qué es ").append(tipo).append("\n");
+        sb.append("────────────────────\n\n");
+        sb.append("  Consulte la tabla en «Visualización Clara». ");
+        sb.append("Seleccione una fila para ver el árbol de evaluación de esa interpretación.\n\n");
+
+        if ("CONTRADICCIÓN".equals(tipo)) {
+            Fila ejemplo = tabla.filas().get(0);
+            sb.append("  Ejemplo (fila 1): ");
+            sb.append(describirFila(tabla.variables(), ejemplo, simboloALema));
+            sb.append(" → la fórmula es F en todas las interpretaciones.\n");
+            return sb.toString();
+        }
+
+        Fila filaVerdadera = null;
+        Fila filaFalsa = null;
+        for (Fila f : tabla.filas()) {
+            if (f.resultadoFormula() && filaVerdadera == null) {
+                filaVerdadera = f;
+            }
+            if (!f.resultadoFormula() && filaFalsa == null) {
+                filaFalsa = f;
+            }
+            if (filaVerdadera != null && filaFalsa != null) {
+                break;
+            }
+        }
+
+        if (filaVerdadera != null) {
+            sb.append("  Caso verdadero: ");
+            sb.append(describirFila(tabla.variables(), filaVerdadera, simboloALema));
+            sb.append(" → la fórmula es V.\n");
+        }
+        if (filaFalsa != null) {
+            sb.append("  Caso falso:      ");
+            sb.append(describirFila(tabla.variables(), filaFalsa, simboloALema));
+            sb.append(" → la fórmula es F.\n");
+        }
+        sb.append("\n  Al existir interpretaciones donde es V y otras donde es F, la fórmula es contingente.\n");
+        return sb.toString();
+    }
+
+    private static String describirFila(List<String> variables, Fila fila, Map<String, String> simboloALema) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < variables.size(); i++) {
+            if (i > 0) {
+                sb.append(", ");
+            }
+            String var = variables.get(i);
+            String leyenda = leyendaLegible(simboloALema.getOrDefault(var, var));
+            sb.append("«").append(leyenda).append("»=");
+            sb.append(fila.valoresVariables()[i] ? "V" : "F");
+        }
         return sb.toString();
     }
 
