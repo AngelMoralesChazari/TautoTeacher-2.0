@@ -106,6 +106,9 @@ public final class LogicScriptRegressionHarness {
         casos.add(new Caso("morph_estudian", "si estudian aprueban", true, "(p " + IMP + " q)"));
         casos.add(new Caso("morph_practico", "practico si y solo si estudio", true, "(p " + IFF + " q)"));
         casos.add(new Caso("morph_llego", "si llego descanso", true, "(p " + IMP + " q)"));
+        casos.add(new Caso("lemma_duerme", "si duerme descansa", true, "(p " + IMP + " q)"));
+        casos.add(new Caso("lemma_duermes", "si duermes descansas", true, "(p " + IMP + " q)"));
+        casos.add(new Caso("lemma_puede", "si puede descansar", true, "(p " + IMP + " q)"));
         casos.add(new Caso(
                 "si_disy_o_eliptico",
                 "si llueve o solea salgo",
