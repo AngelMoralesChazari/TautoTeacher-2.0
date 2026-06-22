@@ -377,7 +377,12 @@ public class MotorLogico {
         return sb.toString();
     }
 
-    /** Evalúa una expresión ya sustituida con literales {@code true}/{@code false} (uso interno tabla de verdad). */
+    /** Evalúa una expresión ya sustituida con literales {@code true}/{@code false}. */
+    public static boolean evaluarExpresionSustituida(String expr) {
+        return evaluaExpresion(expr);
+    }
+
+    /** Uso interno tabla de verdad y árbol de evaluación. */
     static boolean evaluaParaTablaVerdad(String expr) {
         return evaluaExpresion(expr);
     }

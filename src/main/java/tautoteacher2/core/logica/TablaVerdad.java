@@ -2,6 +2,7 @@ package tautoteacher2.core.logica;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -84,6 +85,15 @@ public final class TablaVerdad {
         }
 
         return new Resultado(formula, List.of(vars), filas, null);
+    }
+
+    /** Mapa variable → valor de verdad para una fila de la tabla. */
+    public static Map<String, Boolean> valoresDeFila(List<String> variables, Fila fila) {
+        Map<String, Boolean> valores = new LinkedHashMap<>();
+        for (int i = 0; i < variables.size(); i++) {
+            valores.put(variables.get(i), fila.valoresVariables()[i]);
+        }
+        return valores;
     }
 
     private static Resultado vacio(String formula, String mensaje) {
