@@ -98,6 +98,40 @@ public final class LogicScriptRegressionHarness {
                 "si llueve entonces llevo paraguas, en caso de que estudio, apruebo",
                 true,
                 "((p " + IMP + " q) " + AND + " (r " + IMP + " s))"));
+        casos.add(new Caso("morph_si_duermo", "si duermo descanso", true, "(p " + IMP + " q)"));
+        casos.add(new Caso("morph_estudian", "si estudian aprueban", true, "(p " + IMP + " q)"));
+        casos.add(new Caso("morph_practico", "practico si y solo si estudio", true, "(p " + IFF + " q)"));
+        casos.add(new Caso("morph_llego", "si llego descanso", true, "(p " + IMP + " q)"));
+        casos.add(new Caso(
+                "si_disy_o_eliptico",
+                "si llueve o solea salgo",
+                true,
+                "((" + "p " + OR + " q) " + IMP + " r)"));
+        casos.add(new Caso(
+                "siempre_que_conj_eliptico",
+                "siempre que estudio y practico apruebo",
+                true,
+                "((" + "p " + AND + " q) " + IMP + " r)"));
+        casos.add(new Caso(
+                "siempre_que_disy_eliptico",
+                "siempre que llueve o solea salgo",
+                true,
+                "((" + "p " + OR + " q) " + IMP + " r)"));
+        casos.add(new Caso(
+                "cuando_conj_eliptico",
+                "cuando estudio y practico apruebo",
+                true,
+                "((" + "p " + AND + " q) " + IMP + " r)"));
+        casos.add(new Caso(
+                "cuando_disy_eliptico",
+                "cuando llueve o solea salgo",
+                true,
+                "((" + "p " + OR + " q) " + IMP + " r)"));
+        casos.add(new Caso(
+                "composicion_cuando_si",
+                "cuando llueve llevo paraguas, si estudio apruebo",
+                true,
+                "((p " + IMP + " q) " + AND + " (r " + IMP + " s))"));
         casos.add(new Caso("vacio", "", false, ""));
         casos.add(new Caso("solo_espacios", "   \t  ", false, ""));
 
