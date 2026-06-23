@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
@@ -18,7 +17,7 @@ import javax.swing.JFrame;
  */
 public final class IconosApp {
 
-    private static final String RUTA_ICONO = "/icons/app-icon.png";
+    private static final String RUTA_ICONO = "/icons/TautoTeacher8.png";
     private static final int[] TAMANOS = {16, 32, 48, 64, 128, 256, 512};
 
     private IconosApp() {
