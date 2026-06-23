@@ -17,6 +17,7 @@ public class VentanaPrincipal extends JFrame {
     public VentanaPrincipal() {
         super("TautoTeacher - Logica Proposicional");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        IconosApp.aplicarIconoVentana(this);
         setMinimumSize(new Dimension(650, 600));
         setExtendedState(JFrame.MAXIMIZED_BOTH);
 
