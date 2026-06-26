@@ -30,14 +30,14 @@ public class PanelEntradaNatural extends JPanel {
         setOpaque(false);
 
         TitledBorder tbExterno = (TitledBorder) ((CompoundBorder) getBorder()).getOutsideBorder();
-        tbExterno.setTitleFont(new Font("Segoe UI", Font.PLAIN, 14));
+        tbExterno.setTitleFont(UiEscalado.fuente("Segoe UI", Font.PLAIN, 14));
 
         pestanas = new JTabbedPane();
-        pestanas.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        pestanas.setFont(UiEscalado.fuente("Segoe UI", Font.PLAIN, 14));
         pestanas.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         areaFormula = new JTextArea();
-        configurarAreaTexto(areaFormula, new Font("Segoe UI Symbol", Font.PLAIN, 14));
+        configurarAreaTexto(areaFormula, UiEscalado.fuente("Segoe UI Symbol", Font.PLAIN, 14));
 
         JPanel panelFormula = construirPanelFormula();
         JPanel panelLn = construirPanelLenguajeNatural();
@@ -48,10 +48,14 @@ public class PanelEntradaNatural extends JPanel {
         botonProcesar = new JButton("✔ Verificar Tautología");
         botonProcesar.setBackground(new Color(74, 111, 165));
         botonProcesar.setForeground(Color.BLACK);
-        botonProcesar.setFont(new Font("Dialog", Font.BOLD, 14));
+        botonProcesar.setFont(UiEscalado.fuente("Segoe UI", Font.BOLD, 14));
         botonProcesar.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(180, 180, 180), 1, true),
-                BorderFactory.createEmptyBorder(10, 15, 10, 15)));
+                BorderFactory.createEmptyBorder(
+                        UiEscalado.escalar(10),
+                        UiEscalado.escalar(15),
+                        UiEscalado.escalar(10),
+                        UiEscalado.escalar(15))));
 
         JPanel filaBoton = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
         filaBoton.setOpaque(false);
@@ -77,7 +81,7 @@ public class PanelEntradaNatural extends JPanel {
         String[] simbolos = {"¬", "∧", "∨", "→", "↔", "(", ")"};
         for (String simbolo : simbolos) {
             JButton botonSimbolo = new JButton(simbolo);
-            botonSimbolo.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 14));
+            botonSimbolo.setFont(UiEscalado.fuente("Segoe UI Symbol", Font.PLAIN, 14));
             botonSimbolo.setFocusable(false);
             botonSimbolo.addActionListener(e -> {
                 int pos = areaFormula.getCaretPosition();
@@ -90,7 +94,7 @@ public class PanelEntradaNatural extends JPanel {
 
         JScrollPane scroll = new JScrollPane(areaFormula);
         scroll.setAlignmentX(Component.LEFT_ALIGNMENT);
-        scroll.setPreferredSize(new Dimension(700, 150));
+        scroll.setPreferredSize(new Dimension(UiEscalado.escalar(700), UiEscalado.escalar(150)));
 
         raiz.add(panelSimbolos);
         raiz.add(Box.createRigidArea(new Dimension(0, 10)));
@@ -104,18 +108,19 @@ public class PanelEntradaNatural extends JPanel {
         raiz.setOpaque(false);
         raiz.setBorder(BorderFactory.createEmptyBorder(4, 0, 0, 0));
 
-        JLabel ayuda = new JLabel("<html><body style='width:680px'>"
-                + "Escriba su enunciado (p. ej. <i>si estudio apruebo</i>).");
-        ayuda.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        JLabel ayuda = new JLabel("<html><body style='width:"
+                + UiEscalado.escalar(680) + "px'>"
+                + "Escriba su enunciado (p. ej. <i>si estudio apruebo</i>).</body></html>");
+        ayuda.setFont(UiEscalado.fuente("Segoe UI", Font.PLAIN, 13));
         ayuda.setForeground(new Color(80, 80, 80));
         ayuda.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         areaLenguajeNatural = new JTextArea();
-        configurarAreaTexto(areaLenguajeNatural, new Font("Segoe UI", Font.PLAIN, 14));
+        configurarAreaTexto(areaLenguajeNatural, UiEscalado.fuente("Segoe UI", Font.PLAIN, 14));
 
         JScrollPane scrollLn = new JScrollPane(areaLenguajeNatural);
         scrollLn.setAlignmentX(Component.LEFT_ALIGNMENT);
-        scrollLn.setPreferredSize(new Dimension(700, 150));
+        scrollLn.setPreferredSize(new Dimension(UiEscalado.escalar(700), UiEscalado.escalar(150)));
 
         raiz.add(ayuda);
         raiz.add(Box.createRigidArea(new Dimension(0, 8)));
