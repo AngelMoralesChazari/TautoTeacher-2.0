@@ -26,7 +26,7 @@ try {
     & $javac --release 17 -encoding UTF-8 -d out @files
     $resSrc = Join-Path $root "src\main\resources"
     if (Test-Path $resSrc) {
-        Copy-Item -Path $resSrc -Destination (Join-Path $root "out") -Recurse -Force
+        Copy-Item -Path (Join-Path $resSrc "*") -Destination (Join-Path $root "out") -Recurse -Force
         Write-Host "Recursos copiados a out\"
     }
     Write-Host "OK: compilado con --release 17 en $root\out"
