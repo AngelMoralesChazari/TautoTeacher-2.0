@@ -18,7 +18,7 @@ public class VentanaPrincipal extends JFrame {
         super("TautoTeacher - Logica Proposicional");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         IconosApp.aplicarIconoVentana(this);
-        setMinimumSize(new Dimension(650, 600));
+        setMinimumSize(new Dimension(UiEscalado.escalar(650), UiEscalado.escalar(600)));
         setExtendedState(JFrame.MAXIMIZED_BOTH);
 
         panelEntrada = new PanelEntradaNatural();
@@ -83,12 +83,12 @@ public class VentanaPrincipal extends JFrame {
         filaTitulo.setOpaque(false);
 
         JLabel titulo = new JLabel("TautoTeacher");
-        titulo.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        titulo.setFont(UiEscalado.fuente("Segoe UI", Font.BOLD, 28));
         titulo.setForeground(colorPrimario);
         filaTitulo.add(titulo);
 
         JLabel subtitulo = new JLabel("Herramienta para la verificación de tautologías lógicas");
-        subtitulo.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        subtitulo.setFont(UiEscalado.fuente("Segoe UI", Font.PLAIN, 14));
         subtitulo.setForeground(Color.GRAY);
         subtitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
         subtitulo.setOpaque(false);
@@ -100,7 +100,7 @@ public class VentanaPrincipal extends JFrame {
         // Tarjetas de navegación
         JPanel tarjetas = new JPanel(new GridLayout(1, 3, 15, 0));
         tarjetas.setBorder(BorderFactory.createEmptyBorder(10, 10, 20, 10));
-        tarjetas.setPreferredSize(new Dimension(0, 120));
+        tarjetas.setPreferredSize(new Dimension(0, UiEscalado.escalar(120)));
         tarjetas.setOpaque(false);
         tarjetas.add(crearTarjeta("Análisis Rápido", "Verifica expresiones lógicas en tiempo real", "analisis"));
         tarjetas.add(crearTarjeta("Visualización Clara", "Pestañas Tabla de verdad y Árbol de evaluación", "visualizacion"));
@@ -125,14 +125,14 @@ public class VentanaPrincipal extends JFrame {
         tarjeta.setBackground(Color.WHITE);
 
         JLabel etiquetaTitulo = new JLabel(titulo);
-        etiquetaTitulo.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        etiquetaTitulo.setFont(UiEscalado.fuente("Segoe UI", Font.BOLD, 20));
         etiquetaTitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel etiquetaDescripcion = new JLabel(
                 "<html><div style='text-align:center;width:220px;'>" + descripcion + "</div></html>",
                 SwingConstants.CENTER
         );
-        etiquetaDescripcion.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        etiquetaDescripcion.setFont(UiEscalado.fuente("Segoe UI", Font.PLAIN, 12));
         etiquetaDescripcion.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         tarjeta.add(etiquetaTitulo);
@@ -177,7 +177,7 @@ public class VentanaPrincipal extends JFrame {
         };
         for (String instruccion : instrucciones) {
             JLabel etiqueta = new JLabel("• " + instruccion);
-            etiqueta.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 14));
+            etiqueta.setFont(UiEscalado.fuente("Segoe UI Symbol", Font.PLAIN, 14));
             panelInstrucciones.add(etiqueta);
             panelInstrucciones.add(Box.createRigidArea(new Dimension(0, 5)));
         }
